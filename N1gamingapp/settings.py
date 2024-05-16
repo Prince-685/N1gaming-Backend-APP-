@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-**0y^*!r%3o*i=u=e*@%$rnj&3d=*pl&10aa^7m=dw2#@-v8t$
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['https://n1gaming-backend-app.onrender.com','127.0.0.1']
+ALLOWED_HOSTS = ['https://n1gaming-backend-app.onrender.com','127.0.0.1:8000']
 
 
 # Application definition
