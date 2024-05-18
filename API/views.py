@@ -1,11 +1,8 @@
 from datetime import date, datetime, timedelta
-import random
-import time
-from django.shortcuts import redirect, render
 from django.shortcuts import get_object_or_404
+from .utils import generate_unique_id, send_otp, handle_otp_for_user
 from rest_framework.views import APIView
 from .models import TSN, CustomUsers, DateModel, TimeEntryModel, Transaction, UserGame
-from django.core.mail import send_mail
 from .serializers import CustomUserSerializer, DateModelSerializer, TSNSerializer, TimeEntrySerializer, TransactionSerializer, UserGameSerializer
 from rest_framework.response import Response
 from rest_framework import status
@@ -13,46 +10,38 @@ from rest_framework.authtoken.models import Token
 from .utils import authenticate_user
 from django.contrib.auth.hashers import check_password
 from rest_framework.authentication import TokenAuthentication
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import NotFound
 
-# Create your views here.
-def send_otp(email):
-
-    otp = ''.join(random.choices('0123456789', k=6))
-    subject = 'OTP for Email Verification'
-    message = f'Your OTP is: {otp}'
-    from_email = 'pagalno351@gmail.com'  # Your email address
-    to_email = email
-    send_mail(subject, message, from_email, [to_email])
-    return otp
-
-def generate_unique_id():
-    # Get the current timestamp
-    timestamp = str(int(time.time()))
-
-   
-    id_start = 'B102KMT'
-    random_value = str(random.randint(0, 9999))
-    # Combine timestamp and additional info and random value
-    combined_data = id_start + timestamp + random_value
-
-    
-
-    return combined_data
 
 
 class UserRegistrationAPIView(APIView):
     def post(self, request):
         data=request.data
-        serializer = CustomUserSerializer(data=data)
-        if serializer.is_valid():
-            otp=send_otp(request.data['email'])
-            user = serializer.save(otp=otp,last_otp_send_time=datetime.now())
-            # Return user data with success message
-            return Response({'message': 'OTP sent successfully', 'user_email': user.email}, status=status.HTTP_201_CREATED)
+        email = data.get('email')
+        if not email:
+            return Response({'message': 'Email is required'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        
 
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            existing_user = CustomUsers.objects.get(email=email)
+            if existing_user.is_active:
+                # User has already completed registration
+                return Response({'message': 'Email is already registered'}, status=status.HTTP_400_BAD_REQUEST)
+            # User exists but has not completed OTP verification
+            else:
+                handle_otp_for_user(existing_user, email)
+                return Response({'message': 'User with Email Already Registered. Please verify OTP to complete the registration', 'user_email': existing_user.email}, status=status.HTTP_200_OK)
+            
+        except CustomUsers.DoesNotExist:
+            serializer = CustomUserSerializer(data=data)
+            if serializer.is_valid():
+                handle_otp_for_user(serializer, email)
+                # Return user data with success message
+                return Response({'message': 'OTP sent successfully. Verify OTP to complete registration', 'user_email': serializer.data['email']}, status=status.HTTP_201_CREATED)
+
+            return Response({"message":serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
     
 class OTPValidationAPIView(APIView):
     def post(self, request):
@@ -119,16 +108,21 @@ class UserLoginAPIView(APIView):
         user = authenticate_user(email=email, password=password)
 
         if user is not None:
-            if user.is_active==True:
-                # User is authenticated, generate token
-                token = Token.objects.create(user=user)
+            if user.is_active:
+                # User is authenticated
+                # Delete any existing token
+                Token.objects.get(user=user).delete()
+                
+                # Generate a new token
+                token, created = Token.objects.get_or_create(user=user)
+                
                 return Response({'token': token.key}, status=status.HTTP_200_OK)
             else:
-               return Response({'message': 'OTP required', 'email': email}, status=status.HTTP_400_BAD_REQUEST)
+                handle_otp_for_user(user, email)
+                return Response({'message': 'Registration Incomplete. Please verify OTP to complete the registration', 'email': email}, status=status.HTTP_400_BAD_REQUEST)
         else:
             # Authentication failed
             return Response({'message': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
-
 class UserLogoutAPIView(APIView):
     def post(self, request):
         # Get the user's token value from the request headers
@@ -157,37 +151,22 @@ class ResetPasswordRequestAPIView(APIView):
     def post(self, request):
         email = request.data.get('email')
         user = get_object_or_404(CustomUsers, email=email)
-
-        # Generate password reset token
-        token = default_token_generator.make_token(user)
-
-        # Send email with password reset link containing the token
-        subject = 'Password Reset'
-        message = f'Click the following link to reset your password: http://localhost:8000/reset-password/{token}'
-        send_mail(subject, message, None, [email])
-
-        return Response({'message': 'Password reset link sent successfully'}, status=status.HTTP_200_OK)
-
-
-class VerifyTokenAPIView(APIView):
-    def get(self,request):
-        token = request.GET.get('token')
-        try:
-            user = CustomUsers.objects.get(pk=default_token_generator.check_token(token))
-            if user is not None:
-                return Response({'message':'Email Verified Successfully','token':token},status=status.HTTP_200_OK)
-        except CustomUsers.DoesNotExist:
-            return Response({'message': 'Invalid token'}, status=status.HTTP_400_BAD_REQUEST)
+        otp=send_otp(request.data['email'])
+        user.otp=otp
+        user.last_otp_send_time=datetime.now()
+        user.save()
+        return Response({'message': 'Password reset OTP sent successfully'}, status=status.HTTP_200_OK)
 
 class UpdatePasswordAPIView(APIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        # token_value=request.headers.get('Autorization')
+        token_value=request.headers.get('Authorization')
         current_password = request.data.get('current_password')
         new_password = request.data.get('new_password')
-        user = request.user  # Get the authenticated user from the request
+        token = Token.objects.get(key=token_value.split(' ')[1])
+        user = token.user
 
         # Check if the provided current password matches the user's actual password
         if check_password(current_password, user.password):
@@ -199,7 +178,6 @@ class UpdatePasswordAPIView(APIView):
             # Return a response indicating that the current password is incorrect
             return Response({'message': 'Incorrect current password'}, status=status.HTTP_400_BAD_REQUEST)
         
-
 
 class ResultAPIView(APIView):
     authentication_classes = [TokenAuthentication]
@@ -382,3 +360,18 @@ class UserBalanceAPIView(APIView):
             return Response({'balance':balance},status=status.HTTP_200_OK)
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)  
+
+
+class getUserusernameAPIView(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self,request):
+        try:
+            token_value = request.headers.get('Authorization')
+            token = Token.objects.get(key=token_value.split(' ')[1])
+            user_username = token.user.username
+            return Response({'username':user_username},status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR) 
+

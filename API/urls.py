@@ -1,4 +1,5 @@
 from django.urls import path
+from . import views
 from .views import (
     UserRegistrationAPIView,
     OTPValidationAPIView,
@@ -6,13 +7,13 @@ from .views import (
     UserLoginAPIView,
     UserLogoutAPIView,
     ResetPasswordRequestAPIView,
-    VerifyTokenAPIView,
     UpdatePasswordAPIView,
     ResultAPIView,
     RecentResultAPIView,
     TransactionAPIView,
     UserGameAPIView,
     UserBalanceAPIView,
+    getUserusernameAPIView,
 )
 
 urlpatterns = [
@@ -22,11 +23,11 @@ urlpatterns = [
     path('login/', UserLoginAPIView.as_view(), name='user_login'),
     path('logout/', UserLogoutAPIView.as_view(), name='user_logout'),
     path('reset-password/request/', ResetPasswordRequestAPIView.as_view(), name='reset_password_request'),
-    path('verify-token', VerifyTokenAPIView.as_view(), name='verify-token'),
     path('update-password/', UpdatePasswordAPIView.as_view(), name='reset_password'),
     path('get-result', ResultAPIView.as_view(), name='get-result'),
     path('get-recent-result', RecentResultAPIView.as_view(), name='get-recent-result'),
     path('transaction/',TransactionAPIView.as_view(),name='transaction'),
     path('get-usergame',UserGameAPIView.as_view(),name='get-usergame'),
     path('get-balance',UserBalanceAPIView.as_view(),name='get-balance'),
+    path('get-username',getUserusernameAPIView.as_view(),name='get-username'),
 ]
