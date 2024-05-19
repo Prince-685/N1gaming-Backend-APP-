@@ -185,8 +185,8 @@ class ResetPasswordAPIView(APIView):
         if request.session.get('otp_verified') and request.session.get('verified_user_email') == email:
             user = get_object_or_404(CustomUsers, email=email)
             user.set_password(new_password)
-            Token.objects.filter(user=user).delete()
             user.save()
+            Token.objects.filter(user=user).delete()
             # Clear the OTP verification status from the session
             request.session['otp_verified'] = False
             request.session['verified_user_email'] = None
