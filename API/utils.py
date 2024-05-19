@@ -7,12 +7,11 @@ from django.core.mail import send_mail
 from .models import CustomUsers
 
 def authenticate_user(email, password):
-    User = CustomUsers()
     try:
-        user = User.objects.get(email=email)
+        user = CustomUsers.objects.get(email=email)
         if check_password(password,user.password):
             return user
-    except User.DoesNotExist:
+    except CustomUsers.DoesNotExist:
         pass
     return None
 
