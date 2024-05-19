@@ -123,6 +123,8 @@ class UserLoginAPIView(APIView):
         else:
             # Authentication failed
             return Response({'message': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
+        
+
 class UserLogoutAPIView(APIView):
     def post(self, request):
         # Get the user's token value from the request headers
@@ -156,6 +158,42 @@ class ResetPasswordRequestAPIView(APIView):
         user.last_otp_send_time=datetime.now()
         user.save()
         return Response({'message': 'Password reset OTP sent successfully'}, status=status.HTTP_200_OK)
+
+class ResetPasswordOTPValidationAPIView(APIView):
+    def post(self, request):
+        data = request.data
+        email = data.get('email')
+        otp_entered = data.get('otp')
+
+        user = get_object_or_404(CustomUsers, email=email)
+        if otp_entered == user.otp:
+            user.otp = ''  # Clear the OTP
+            user.save()
+            # Store OTP verification status in session
+            request.session['otp_verified'] = True
+            request.session['verified_user_email'] = email
+            return Response({'message': 'OTP validation successful'}, status=status.HTTP_200_OK)
+        else:
+            return Response({'message': 'Invalid OTP'}, status=status.HTTP_400_BAD_REQUEST)
+
+class ResetPasswordAPIView(APIView):
+    def post(self, request):
+        data = request.data
+        email = data.get('email')
+        new_password = data.get('new_password')
+        # Check if OTP verification status is stored in the session
+        if request.session.get('otp_verified') and request.session.get('verified_user_email') == email:
+            user = get_object_or_404(CustomUsers, email=email)
+            user.set_password(new_password)
+            Token.objects.filter(user=user).delete()
+            user.save()
+            # Clear the OTP verification status from the session
+            request.session['otp_verified'] = False
+            request.session['verified_user_email'] = None
+            return Response({'message': 'Password reset successful'}, status=status.HTTP_200_OK)
+        else:
+            return Response({'message': 'OTP not verified or session expired'}, status=status.HTTP_400_BAD_REQUEST)
+
 
 class UpdatePasswordAPIView(APIView):
     authentication_classes = [TokenAuthentication]

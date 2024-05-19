@@ -121,8 +121,14 @@ REST_FRAMEWORK = {
     ),
 }
 
+# Session settings
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+SESSION_COOKIE_NAME = 'sessionid'
+SESSION_COOKIE_HTTPONLY = True
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False
+SESSION_COOKIE_AGE = 1209600  # Two weeks, in seconds
 
-
+#Email Settings
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'  # Your SMTP server address
 EMAIL_PORT = 587  # Your SMTP server port (usually 587 for TLS)
