@@ -4,14 +4,13 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import check_password
 from django.core.mail import send_mail
 
-from .models import CustomUsers
-
 def authenticate_user(email, password):
+    User = get_user_model()
     try:
-        user = CustomUsers.objects.get(email=email)
+        user = User.objects.get(email=email)
         if check_password(password,user.password):
             return user
-    except CustomUsers.DoesNotExist:
+    except User.DoesNotExist:
         pass
     return None
 

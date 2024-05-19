@@ -37,7 +37,8 @@ class UserRegistrationAPIView(APIView):
         except CustomUsers.DoesNotExist:
             serializer = CustomUserSerializer(data=data)
             if serializer.is_valid():
-                handle_otp_for_user(serializer, email)
+                user = serializer.save()
+                handle_otp_for_user(user, email)
                 # Return user data with success message
                 return Response({'message': 'OTP sent successfully. Verify OTP to complete registration', 'user_email': serializer.data['email']}, status=status.HTTP_201_CREATED)
 
@@ -186,7 +187,6 @@ class ResetPasswordAPIView(APIView):
             user = get_object_or_404(CustomUsers, email=email)
             user.set_password(new_password)
             user.save()
-            Token.objects.filter(user=user).delete()
             # Clear the OTP verification status from the session
             request.session['otp_verified'] = False
             request.session['verified_user_email'] = None
