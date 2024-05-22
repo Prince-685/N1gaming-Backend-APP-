@@ -170,9 +170,6 @@ class ResetPasswordOTPValidationAPIView(APIView):
         if otp_entered == user.otp:
             user.otp = ''  # Clear the OTP
             user.save()
-            # Store OTP verification status in session
-            request.session['otp_verified'] = True
-            request.session['verified_user_email'] = email
             return Response({'message': 'OTP validation successful'}, status=status.HTTP_200_OK)
         else:
             return Response({'message': 'Invalid OTP'}, status=status.HTTP_400_BAD_REQUEST)
@@ -182,19 +179,13 @@ class ResetPasswordAPIView(APIView):
         data = request.data
         email = data.get('email')
         new_password = data.get('new_password')
-        # Check if OTP verification status is stored in the session
-        if request.session.get('otp_verified') and request.session.get('verified_user_email') == email:
+        try: 
             user = get_object_or_404(CustomUsers, email=email)
             user.set_password(new_password)
             user.save()
-            # Clear the OTP verification status from the session
-            request.session['otp_verified'] = False
-            request.session['verified_user_email'] = None
             return Response({'message': 'Password reset successful'}, status=status.HTTP_200_OK)
-        else:
-            return Response({'message': 'OTP not verified or session expired'}, status=status.HTTP_400_BAD_REQUEST)
-
-
+        except CustomUsers.DoesNotExist:
+            return Response({'message': 'User does not exist'}, status=status.HTTP_404_NOT_FOUND)
 class UpdatePasswordAPIView(APIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
