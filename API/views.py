@@ -214,7 +214,7 @@ class ResultAPIView(APIView):
 
     def get(self, request):
         try:
-            request_date = request.data.get('date', str(date.today()))
+            request_date = request.query_params.get('date', str(date.today()))
             date_instance = DateModel.objects.get(date=request_date)
 
             # METHOD-1
