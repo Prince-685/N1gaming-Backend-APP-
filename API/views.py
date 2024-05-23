@@ -186,6 +186,8 @@ class ResetPasswordAPIView(APIView):
             return Response({'message': 'Password reset successful'}, status=status.HTTP_200_OK)
         except CustomUsers.DoesNotExist:
             return Response({'message': 'User does not exist'}, status=status.HTTP_404_NOT_FOUND)
+        
+        
 class UpdatePasswordAPIView(APIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
@@ -225,7 +227,9 @@ class ResultAPIView(APIView):
             #METHOD-2
             time_entry=date_instance.time_entries.all()
             serializer = TimeEntrySerializer(time_entry, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            filtered_data = [{'Time': item['Time'], **{key: item[key] for key in 'ABCDEFGHIJKLMNOPQRST'}} for item in serializer.data]
+            result = [[item['Time']] + [item[key] for key in 'ABCDEFGHIJKLMNOPQRST'] for item in filtered_data]
+            return Response({'result':result}, status=status.HTTP_200_OK)
         except DateModel.DoesNotExist:
             raise NotFound("Date not found.")
         except Exception as e:
