@@ -134,7 +134,7 @@ class UserGame(models.Model):
 
 class Win_Percent(models.Model):
     pid=models.AutoField(primary_key=True)
-    percent=models.IntegerField()
+    percent=models.IntegerField(default=80)
 
     def __str__(self):
 
