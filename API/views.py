@@ -3,7 +3,7 @@ from django.shortcuts import get_object_or_404
 from .utils import generate_unique_id, send_otp, handle_otp_for_user
 from rest_framework.views import APIView
 from .models import TSN, CustomUsers, DateModel, TimeEntryModel, Transaction, UserGame
-from .serializers import CustomUserSerializer, DateModelSerializer, TSNSerializer, TimeEntrySerializer, TransactionSerializer, UserGameSerializer
+from .serializers import BankDetailSerializer, CustomUserSerializer, DateModelSerializer, TSNSerializer, TimeEntrySerializer, TransactionSerializer, UserGameSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.authtoken.models import Token
@@ -187,7 +187,7 @@ class ResetPasswordAPIView(APIView):
         except CustomUsers.DoesNotExist:
             return Response({'message': 'User does not exist'}, status=status.HTTP_404_NOT_FOUND)
         
-        
+
 class UpdatePasswordAPIView(APIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
@@ -408,3 +408,21 @@ class getUserusernameAPIView(APIView):
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR) 
 
+class BankDetailsAPIView(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    
+    def get(self, request):
+        token_value = request.headers.get('Authorization')
+        token = Token.objects.get(key=token_value.split(' ')[1])
+        serializer = BankDetailSerializer(token.user)
+        return Response(serializer.data)
+
+    def post(self, request):
+        token_value = request.headers.get('Authorization')
+        token = Token.objects.get(key=token_value.split(' ')[1])
+        serializer = BankDetailSerializer(token.user, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'message': 'Bank details updated successfully'}, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

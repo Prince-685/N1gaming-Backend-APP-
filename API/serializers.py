@@ -11,6 +11,11 @@ class CustomUserSerializer(serializers.ModelSerializer):
         user = CustomUsers.objects.create_user(**validated_data)
         return user
 
+class BankDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUsers
+        fields = ['account_number', 'holder_name', 'ifsc_code', 'upi_id']
+
 class AdminUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUsers

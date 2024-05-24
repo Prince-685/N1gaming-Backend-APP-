@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'API',
     'rest_framework',
     'rest_framework.authtoken',
+    'django_crontab',
 ]
 
 MIDDLEWARE = [
@@ -158,3 +159,12 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+CRONJOBS = [
+    ('30 9 * * *', 'API.cron.Save_result'),
+    ('45 9 * * *', 'API.cron.Save_result'),
+    ('0-59/15 10-21 * * *', 'API.cron.Save_result'),
+    ('0 22 * * *', 'API.cron.Save_result'),
+
+]
