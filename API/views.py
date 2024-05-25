@@ -1,8 +1,9 @@
 from datetime import date, datetime, timedelta
+import random
 from django.shortcuts import get_object_or_404
 from .utils import generate_unique_id, send_otp, handle_otp_for_user
 from rest_framework.views import APIView
-from .models import TSN, CustomUsers, DateModel, TimeEntryModel, Transaction, UserGame
+from .models import TSN, CustomUsers, DateModel, TimeEntryModel, Transaction, UserGame, Win_Percent
 from .serializers import BankDetailSerializer, CustomUserSerializer, DateModelSerializer, TSNSerializer, TimeEntrySerializer, TransactionSerializer, UserGameSerializer
 from rest_framework.response import Response
 from rest_framework import status
@@ -12,7 +13,7 @@ from django.contrib.auth.hashers import check_password
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import NotFound
-
+from .utils import wining_result
 
 
 class UserRegistrationAPIView(APIView):
@@ -426,3 +427,4 @@ class BankDetailsAPIView(APIView):
             serializer.save()
             return Response({'message': 'Bank details updated successfully'}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    

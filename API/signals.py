@@ -5,18 +5,20 @@ from .models import TimeEntryModel, TSN, UserGame
 
 
 @receiver(post_save, sender=TimeEntryModel)
-def settle_bets(sender, instance):
+def settle_bets(sender, instance, **kwargs):
         
     try:
         today_date=date.today()
+        today_date=today_date.strftime("%d/%m/%Y")
         time=instance.Time
-        game_date_time=str(today_date)+" "+time
+        time=time.strftime("%I:%M %p")
+        game_date_time = f"{today_date} {time}"
         
         tsn_instances=TSN.objects.filter(gamedate_time=game_date_time)
-
         for tsn in tsn_instances:
             win_points=0
             game_play = tsn.user_games.all()
+            print(game_play)
             for game in game_play:
                 g_name=game.game_name
                 res=getattr(instance,g_name)
