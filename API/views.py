@@ -316,12 +316,11 @@ class TransactionAPIView(APIView):
         return Response({'success': 'Data saved successfully'}, status=status.HTTP_201_CREATED)
 
     def get(self, request):
-        requested_date = request.data.get('date', date.today())
         token_value = request.headers.get('Authorization')
         token = Token.objects.get(key=token_value.split(' ')[1])
         user = token.user
 
-        transaction_instance = Transaction.objects.filter(cuser=user.pk, date=requested_date).order_by('-date')[:20]
+        transaction_instance = Transaction.objects.filter(cuser=user.pk).order_by('-date')[:20]
         response_data = []
 
         for transaction in transaction_instance:
@@ -335,6 +334,7 @@ class TransactionAPIView(APIView):
                     "gamedate_time": tsn_data.get("gamedate_time", ""),
                     "playedpoints": tsn_data.get("playedpoints", ""),
                     "slipdatetime": tsn_data.get("slipdatetime", ""),
+                    "winning": tsn_data.get("winning",""),
                 }
                 extracted_tsns_data.append(extracted_tsn_data)
 

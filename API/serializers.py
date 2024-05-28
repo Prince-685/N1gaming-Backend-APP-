@@ -53,7 +53,7 @@ class TSNSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = TSN
-        fields = ['transaction', 'tsn_id', 'gamedate_time', 'playedpoints', 'slipdatetime']
+        fields = ['transaction', 'tsn_id', 'gamedate_time', 'playedpoints', 'slipdatetime','winning']
 
 
 
