@@ -353,7 +353,7 @@ class UserGameAPIView(APIView):
 
     def get(self, request):
         try:
-            tsn_id = request.data.get('tsn_id') 
+            tsn_id =request.query_params.get('tsn_id')
             if not tsn_id:
                 return Response({"error": "tsn_id parameter is missing"}, status=status.HTTP_400_BAD_REQUEST)
             
