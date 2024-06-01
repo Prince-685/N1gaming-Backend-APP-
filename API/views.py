@@ -272,7 +272,7 @@ class TransactionAPIView(APIView):
         gamedate_times = data.get('gamedate_times', [])
 
         if not gamedate_times:
-            return Response({'error': 'Select Gametime'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'message': 'Select Gametime'}, status=status.HTTP_400_BAD_REQUEST)
 
         if user.balance < data.get('total_amount'):
             return Response({'message':'Insufficient Balance'}, status=status.HTTP_403_FORBIDDEN)
@@ -313,7 +313,7 @@ class TransactionAPIView(APIView):
         user.balance -= data.get('total_amount')
         user.save()
 
-        return Response({'success': 'Data saved successfully'}, status=status.HTTP_201_CREATED)
+        return Response({'message': 'Data saved successfully'}, status=status.HTTP_201_CREATED)
 
     def get(self, request):
         token_value = request.headers.get('Authorization')
@@ -376,9 +376,9 @@ class UserGameAPIView(APIView):
             return Response(response_data, status=status.HTTP_200_OK)
         
         except TSN.DoesNotExist:
-            return Response({"error": "TSN with the specified ID does not exist"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"message": "TSN with the specified ID does not exist"}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
-            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)  
+            return Response({"message": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)  
 
 
 class UserBalanceAPIView(APIView):
@@ -393,7 +393,7 @@ class UserBalanceAPIView(APIView):
             balance=user.balance
             return Response({'balance':balance},status=status.HTTP_200_OK)
         except Exception as e:
-            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)  
+            return Response({"message": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)  
 
 
 class getUserusernameAPIView(APIView):
@@ -407,7 +407,7 @@ class getUserusernameAPIView(APIView):
             user_username = token.user.username
             return Response({'username':user_username},status=status.HTTP_200_OK)
         except Exception as e:
-            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR) 
+            return Response({"message": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR) 
 
 class BankDetailsAPIView(APIView):
     authentication_classes = [TokenAuthentication]
@@ -426,5 +426,5 @@ class BankDetailsAPIView(APIView):
         if serializer.is_valid():
             serializer.save()
             return Response({'message': 'Bank details updated successfully'}, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'message':serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
     
