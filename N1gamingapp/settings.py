@@ -43,7 +43,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'django_crontab',
-    'API.apps.ApiConfig',
+    # 'API.apps.ApiConfig',
 ]
 
 MIDDLEWARE = [
