@@ -8,7 +8,7 @@ from .utils import wining_result
 from .models import DateModel,TimeEntryModel,Transaction,TSN,UserGame,Win_Percent
 
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'your_project_name.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'N1gamingapp.settings')
 django.setup()
 
 def Save_result():
