@@ -115,3 +115,42 @@ def Save_result():
     
 
 
+def Settle_bets():
+
+    try:
+        today_date=date.today()
+        
+        current_time = datetime.now()
+        adjusted_time = current_time - timedelta(minutes=2)
+        adjusted_time = adjusted_time.replace(second=0, microsecond=0)
+        time = adjusted_time.time()
+        date_instance=DateModel.objects.get(date=date.today())
+        instance=TimeEntryModel.objects.get(date=date_instance,time=time) 
+        today_date=today_date.strftime("%d/%m/%Y")
+        time=instance.Time
+        time=time.strftime("%I:%M %p")
+        game_date_time = f"{today_date} {time}"
+        
+        tsn_instances=TSN.objects.filter(gamedate_time=game_date_time)
+        for tsn in tsn_instances:
+            win_points=0
+            game_play = tsn.user_games.all()
+            print(game_play)
+            for game in game_play:
+                g_name=game.game_name
+                res=getattr(instance,g_name)
+                if res==game.number:
+                    win_points=win_points+game.Playedpoints*90
+            
+            tsn.winning=win_points
+            tsn.save()
+            transaction_instance=tsn.transaction
+            user=transaction_instance.cuser
+            user.balance=user.balance+win_points
+            user.save()
+    except TSN.DoesNotExist:
+        print("No TSN instances found for the given game date and time.")
+        pass
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        pass
