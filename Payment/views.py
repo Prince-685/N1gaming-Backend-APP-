@@ -22,7 +22,8 @@ class PaymentQRUPIAPIView(APIView):
                 return Response({'error': 'Image and UPI ID are required.'}, status=status.HTTP_400_BAD_REQUEST)
 
             # Save the image file to MEDIA_ROOT
-            file_path = os.path.join('payment_qr_upi', image.name)
+            filename = image.name.replace(' ', '_')
+            file_path = os.path.join('payment_qr_upi', filename)
             path = default_storage.save(file_path, image)
             # Create a new PaymentQRUPI instance with image URL
             payment_qr_upi = PaymentQRUPI.objects.create(image=os.path.join(settings.MEDIA_URL, file_path), upi_id=upi_id)
@@ -56,7 +57,8 @@ class PaymentFormAPIView(APIView):
             return Response({'error': 'Payment image is required.'}, status=status.HTTP_400_BAD_REQUEST)
 
         # Save the image file to MEDIA_ROOT
-        file_path = os.path.join('payment_request_upi', payment_image.name)
+        filename = payment_image.name.replace(' ', '_')
+        file_path = os.path.join('payment_request_upi', filename)
         path = default_storage.save(file_path, payment_image)
 
         data = {
