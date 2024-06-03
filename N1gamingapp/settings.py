@@ -43,7 +43,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'django_crontab',
-    # 'API.apps.ApiConfig',
+    'Payment',
 ]
 
 MIDDLEWARE = [
@@ -61,7 +61,7 @@ ROOT_URLCONF = 'N1gamingapp.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -155,6 +155,12 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = 'static/'
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'AdminDashboard', 'assets')]
+# BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+# Define the media directory
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
@@ -163,13 +169,13 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 CRONJOBS = [
-    #save result
+    # for saving result
     ('30 9 * * *', 'API.cron.Save_result'),
     ('45 9 * * *', 'API.cron.Save_result'),
     ('0-59/15 10-21 * * *', 'API.cron.Save_result'),
     ('0 22 * * *', 'API.cron.Save_result'),
 
-    #settle bets after two minutes
+    # To settle bets after two minutes
     ('32 9 * * *', 'API.cron.Settle_bets'),
     ('47 9 * * *', 'API.cron.Settle_bets'),
     ('2-59/15 10-21 * * *', 'API.cron.Settle_bets'),

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login</title>
+    <link rel="stylesheet" href="/static/css/admin.css">
+</head>
+<body>
+    <div class="container">
+        <div class="content">
+            <h2>Admin Login</h2>
+            <form action="/adminlogin" method="post">
+                <input type="text" name="username" placeholder="Enter Username" id="username"/>
+                <input type="password" name="password" placeholder="Enter Password" id="password" />
+                <button class="Login">Login</button>
+
+                <div class="result" style="color: red;">
+                    <strong>{{msg}}</strong>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</body>
+</html>

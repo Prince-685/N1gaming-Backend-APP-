@@ -1,0 +1,46 @@
+.container{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.container .content{
+    background-color: rgb(124, 118, 118);
+    margin-top: 10%;
+    width: 500px;
+    height: 280px;
+    border: 2px solid black;
+    border-radius: 10px;
+}
+
+.container .content input{
+    width: 80%;
+    height: 35px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    padding-left: 5px;
+    font-size: 16px;
+}
+
+.container .content .Login{
+    width: 70%;
+    height: 40px;
+    background-color: black;
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    border-radius: 10px;
+    border: 1px solid black;
+    margin-top: 10px;
+    cursor:pointer;
+    margin-bottom: 10px;
+} 
+
+.container .content .Login:hover{
+    background-color: white;
+    color: black;
+}
+

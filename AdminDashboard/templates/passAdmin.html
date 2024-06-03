@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Change Admin Password</title>
+
+    <style>
+        body{
+            background-color: rgb(231, 234, 234);
+        }
+
+        .header {
+            margin-left: 65px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 10px;
+            background-color: #333;
+            color: #fff;
+            
+        }
+
+        .container{
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            margin-top: 20px;
+        }
+
+        .container h2{
+            font-size: 35px;
+            margin-top: 2rem;
+            color: rgba(39, 39, 82, 0.581);
+        }
+
+        .container .content{
+            width: 80%;
+            max-width: 400px;
+            height: auto;
+            border: 2px solid white;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .container .content form{
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            width: 100%;
+            height: 100%;
+            padding: 20px 10px;
+            margin-top: 10px;
+        }
+
+        .container .content form input{
+            width: 100%;
+            max-width: 300px;
+            height: 30px;
+            margin-bottom: 20px;
+            border: none;
+            border-bottom: 1px solid black;
+            font-size: 20px;
+            background: transparent;
+            padding: 5px;
+        }
+
+        .container .content form input:focus{
+            outline: none;
+        }
+
+        .container .content form button{
+            width: 100%;
+            max-width: 200px;
+            padding: 10px 40px; 
+            text-align: center;
+            font-size: 20px;
+            background-color: black;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        .container .content .success{
+            color: green;
+            margin-bottom: 10px;
+        }
+
+        .container .content .failure{
+            color: red;
+            margin-bottom: 10px;
+        }
+
+        .ftitle {
+            display: flex;
+            justify-content: center;
+            font-size: 35px;
+            font-family: system-ui, sans-serif;
+            font-weight: 900;
+            color: rgba(239, 51, 13, 0.532);
+            --x-offset: -0.0625em;
+            --y-offset: 0.0625em;
+            --stroke: 0.025em;
+            --background-color: rgb(239, 241, 233);
+            --stroke-color: rgb(221, 173, 230);
+            width: 90%;
+            text-shadow: 
+                var(--x-offset) var(--y-offset) 0px var(--background-color), 
+                calc(var(--x-offset) - var(--stroke)) calc(var(--y-offset) + var(--stroke)) 0px var(--stroke-color);
+        }
+
+        @media only screen and (max-width: 966px){
+            .container .content{
+                width: 90%;
+            }
+        }
+
+        @media only screen and (max-width: 576px){
+            .container .content{
+                width: 95%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header ftitle">
+        <a href="/admindashboard"><b>N1 GAMING ADMIN</b></a> 
+    </div>
+
+    <div class="container">
+        <h2>Change Password</h2>
+        <div class="content">
+            <form action="/updateAdminPass" method="post">
+                <input type="text" placeholder="Enter Current Password" id="cPassword" name="cPassword"/>
+                <input type="text" placeholder="Enter New Password" id="newPassword" name="newPassword"/>
+                <input type="text" placeholder="Re-enter New Password" id="cfPassword" name="cfPassword"/>
+                <button type="submit">Submit</button>
+            </form>
+            {% if msg %}
+            <div class="success">{{msg}}</div>
+            {% else %}
+            <div class="failure" style="color:red">{{msg}}</div>
+            {% endif %}
+        </div>
+    </div>
+
+
+    <script>
+        {% if messages %}
+            {% for message in messages %}
+                alert("{{ message }}");
+            {% endfor %}
+        {% endif %}
+    </script>
+
+</body>
+</html>
