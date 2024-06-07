@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
 from .models import PaymentForm, PaymentQRUPI
-from .serializers import PaymentQRUPISerializer, PaymentFormSerializer
+from .serializers import PaymentQRUPISerializer, PaymentFormSerializer, WithdrawalHistorySerializer
 
 # Create your views here.
 
@@ -77,14 +77,13 @@ class PaymentFormAPIView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
-    def get(self, request):
-        try:
-            # Filter PaymentForm objects where status is null or empty
-            queryset = PaymentForm.objects.filter(status__isnull=True) | PaymentForm.objects.filter(status='')
-            serializer = PaymentFormSerializer(queryset, many=True)
-            for data in serializer.data:
-                data.pop('status', None) 
 
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        except PaymentForm.DoesNotExist:
-            return Response({"message": "No recharge request found"}, status=status.HTTP_404_NOT_FOUND)
+class WithdrawalRequestAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        serializer = WithdrawalHistorySerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(user=request.user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

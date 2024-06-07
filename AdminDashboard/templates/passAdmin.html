@@ -7,7 +7,7 @@
 
     <style>
         body{
-            background-color: rgb(231, 234, 234);
+            background-image: url(/assets/img/bbg.jpg);
         }
 
         .header {
@@ -32,21 +32,22 @@
 
         .container h2{
             font-size: 35px;
-            margin-top: 2rem;
-            color: rgba(39, 39, 82, 0.581);
+            margin-top: 7rem;
+            color: black;
+            margin-bottom: 0%;
         }
 
         .container .content{
             width: 80%;
             max-width: 400px;
             height: auto;
-            border: 2px solid white;
-            border-radius: 5px;
+            /* border: 2px solid white;
+            border-radius: 5px; */
             display: flex;
             align-items: center;
             flex-direction: column;
-            padding: 20px;
-            margin-top: 20px;
+            /* padding: 20px;
+            margin-top: 20px; */
         }
 
         .container .content form{
@@ -131,34 +132,33 @@
 </head>
 <body>
     <div class="header ftitle">
-        <a href="/admindashboard"><b>N1 GAMING ADMIN</b></a> 
+        <a href="dashboard.html"><b>N1 GAMING</b></a> 
     </div>
 
     <div class="container">
-        <h2>Change Password</h2>
+        <h2 >Change Password</h2>
         <div class="content">
-            <form action="/updateAdminPass" method="post">
-                <input type="text" placeholder="Enter Current Password" id="cPassword" name="cPassword"/>
-                <input type="text" placeholder="Enter New Password" id="newPassword" name="newPassword"/>
-                <input type="text" placeholder="Re-enter New Password" id="cfPassword" name="cfPassword"/>
+            <form id="changePass" method="post">
+                <input type="text" placeholder="Enter Current Password" id="current_password" name="current_password" required/>
+                <input type="text" placeholder="Enter New Password" id="new_password" name="new_password" required/>
+                <input type="text" placeholder="Re-enter New Password" id="confirm_password" name="confirm_password" required/>
                 <button type="submit">Submit</button>
             </form>
-            {% if msg %}
-            <div class="success">{{msg}}</div>
-            {% else %}
-            <div class="failure" style="color:red">{{msg}}</div>
-            {% endif %}
         </div>
+
+        <div id="response" style="color:red;font-size:xx-large;"></div>
+
     </div>
 
+    
 
-    <script>
+    <!-- <script>
         {% if messages %}
             {% for message in messages %}
                 alert("{{ message }}");
             {% endfor %}
         {% endif %}
-    </script>
-
+    </script> -->
+    <script src="../assets/js/response/changePassword.js"></script>
 </body>
 </html>

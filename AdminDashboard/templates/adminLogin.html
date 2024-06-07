@@ -1,26 +1,35 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Login</title>
-    <link rel="stylesheet" href="/static/css/admin.css">
+    <link href="static/css/admin.css" rel="stylesheet" />
+
 </head>
 <body>
-    <div class="container">
-        <div class="content">
-            <h2>Admin Login</h2>
-            <form action="/adminlogin" method="post">
-                <input type="text" name="username" placeholder="Enter Username" id="username"/>
-                <input type="password" name="password" placeholder="Enter Password" id="password" />
-                <button class="Login">Login</button>
-
-                <div class="result" style="color: red;">
-                    <strong>{{msg}}</strong>
-                </div>
-
-            </form>
-        </div>
+    <div class="img-container">
+        <img src="static/img/colour-cash-high-resolution-logo-black-transparent.png">
     </div>
+    <div class="container">
+        <h2>Admin Login</h2>
+        <form method="post" id="login">
+            <div class="input">
+                <input type="text" name="email" placeholder="Enter Username" id="email"/>
+            </div>
+            <div class="input">
+                <input type="password" name="password" placeholder="Enter Password" id="password" />
+            </div>
+            <button class="Login" type="submit">Login</button>
+            
+        </form>
+    </div>
+    
+    <div id="response" style="color:red;font-size:xx-large;"></div>
+    <script src="..static/js/response/login.js"></script>
+
 </body>
 </html>
+

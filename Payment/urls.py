@@ -8,5 +8,5 @@ urlpatterns = [
     path('upload_payment_qr/', PaymentQRUPIAPIView.as_view(), name='Upload Payment QR'),
     path('get_payment_qr', PaymentQRUPIAPIView.as_view(), name='Get Payment QR'),
     path('recharge_request/', PaymentFormAPIView.as_view(), name='recharge_request'),
-    path('get_recharge_request', PaymentFormAPIView.as_view(), name='Recharge Request')
+    path('withdraw_request/', WithdrawalRequestAPIView.as_view(), name='withdraw_request'),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

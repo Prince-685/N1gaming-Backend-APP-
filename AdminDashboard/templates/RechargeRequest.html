@@ -18,82 +18,79 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <link rel="apple-touch-icon" sizes="76x76" href="/static/img/apple-icon.png">
-  <link rel="icon" type="image/png" href="/static/img/favicon.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="/assets/img/apple-icon.png">
+  <link rel="icon" type="image/png" href="/assets/img/favicon.png">
   <title>
     ADMIN Dashboard
   </title>
   <!--     Fonts and icons     -->
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
   <!-- Nucleo Icons -->
-  <link href="/static/css/nucleo-icons.css" rel="stylesheet" />
-  <link href="/static/css/nucleo-svg.css" rel="stylesheet" />
+  <link href="/assets/css/nucleo-icons.css" rel="stylesheet" />
+  <link href="/assets/css/nucleo-svg.css" rel="stylesheet" />
   <!-- Font Awesome Icons -->
   <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
-  <link href="/static/css/nucleo-svg.css" rel="stylesheet" />
+  <link href="/assets/css/nucleo-svg.css" rel="stylesheet" />
   <!-- CSS Files -->
-  <link id="pagestyle" href="/static/css/argon-dashboard.css?v=2.0.4" rel="stylesheet" />
+  <link id="pagestyle" href="/assets/css/argon-dashboard.css?v=2.0.4" rel="stylesheet" />
+
+    <!-- DataTables CSS -->
+  <link href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css" rel="stylesheet">
+
+    <!-- DataTables JavaScript -->
+  <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
 </head>
 
 <style>
-  .Container{
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
+  .Center{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
   }
 
-  .Container button{
-    font-size: 16px;
+  .addUser{
+    width: 600px;
   }
 
-  .inputContent{
-      display: flex;
-      flex-direction: row;
+  .addUser div{
+    display: flex;
+    justify-content: space-between;
+    text-align: center;
+    align-items: center;
   }
 
-  .time{
-      display: flex;
-      flex-direction: column;
+  .addUser input{
+    width: 600px;
+    height: 35px;
+    padding-left: 10px;
+    border: none;
+    border-bottom: 2px solid blue;
   }
 
-  .time label{
-      font-size: 18px;
-      font-weight: bold;
-      margin-top: 8px;
+  .addUser input:focus{
+    outline: none;
   }
 
-  .time select{
-      border-radius: 5px;
-      height: 25px;
+  .addUser button{
+    font-size: 18px;
   }
 
-  .alphabet-container {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 5px;
+  .delete:hover{
+    color: red;
   }
-
-  .alphabet-box {
-      text-align: center;
-      margin: 10px 5px;
+  .Login{
+    background-color: rgba(24, 9, 240, 0.716);
+    color: #f6fcfb;
+    font-weight: bold;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
   }
-
-  .alphabet {
-      font-size: 18px;
-      font-weight: bold;
-  }
-
-  input {
-      margin-top: 5px;
-      width: 30px;
-      border-radius: 5px;
-      height: 25px;
-  }
-
-  .CardPos{
-    top: 20%;
+  .Login:hover {
+          background-color: #10ce30;
+          color: #000;
   }
 </style>
 
@@ -102,8 +99,8 @@
   <aside class="sidenav bg-white navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-4 " id="sidenav-main">
     <div class="sidenav-header">
       <i class="fas fa-times p-3 cursor-pointer text-secondary opacity-5 position-absolute end-0 top-0 d-none d-xl-none" aria-hidden="true" id="iconSidenav"></i>
-      <a class="navbar-brand m-0" href=" https://demos.creative-tim.com/argon-dashboard/pages/dashboard.html " target="_blank">
-        <img src="/static/img/logo-ct-dark.png" class="navbar-brand-img h-100" alt="main_logo">
+      <a class="navbar-brand m-0" class="navbar-brand-img h-100" alt="main_logo">
+        <img src="/assets/img/logo-ct-dark.png" class="navbar-brand-img h-100" alt="main_logo">
         <span class="ms-1 font-weight-bold">Admin Dashboard </span>
       </a>
     </div>
@@ -111,7 +108,7 @@
     <div class="collapse navbar-collapse  w-auto " id="sidenav-collapse-main">
       <ul class="navbar-nav">
         <li class="nav-item">
-          <a class="nav-link " href="/admindashboard">
+          <a class="nav-link " href="dashboard.html">
             <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
               <i class="ni ni-tv-2 text-primary text-sm opacity-10"></i>
             </div>
@@ -119,33 +116,40 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link active" href="/feedresult">
-            <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
-              <i class="ni ni-calendar-grid-58 text-warning text-sm opacity-10"></i>
-            </div>
-            <span class="nav-link-text ms-1">Feed Result</span>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link " href="/adduser">
+          <a class="nav-link active" href="RechargeRequest.html">
             <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
               <i class="ni ni-credit-card text-success text-sm opacity-10"></i>
             </div>
-            <span class="nav-link-text ms-1">Add User</span>
+            <span class="nav-link-text ms-1">Recharge Request</span>
           </a>
         </li>
-        
         <li class="nav-item">
-          <a class="nav-link active" href="/showresult">
+          <a class="nav-link " href="RechargeHistory.html">
             <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
               <i class="ni ni-app text-info text-sm opacity-10"></i>
             </div>
-            <span class="nav-link-text ms-1"> Show Result</span>
+            <span class="nav-link-text ms-1"> Recharge History </span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" href="WithdrawalRequest.html">
+            <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+              <i class="ni ni-credit-card text-success text-sm opacity-10"></i>
+            </div>
+            <span class="nav-link-text ms-1">Withdrawal Request</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link " href="WithdrawHistory.html">
+            <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+              <i class="ni ni-app text-info text-sm opacity-10"></i>
+            </div>
+            <span class="nav-link-text ms-1"> Withdraw History </span>
           </a>
         </li>
 
         <li class="nav-item">
-          <a class="nav-link " href="/setbar">
+          <a class="nav-link " href="bar.html">
             <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
               <i class="ni ni-chart-pie-35 text-dark text-sm opacity-10"></i>
             </div>
@@ -154,15 +158,13 @@
         </li>
         
         <li class="nav-item">
-          <a class="nav-link " href="/changePass">
+          <a class="nav-link " href="passAdmin.html">
             <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
               <i class="ni ni-single-02 text-dark text-sm opacity-10"></i>
             </div>
             <span class="nav-link-text ms-1">Change Password</span>
           </a>
         </li>
-      </ul>
-    </div>
     
   </aside>
   <main class="main-content position-relative border-radius-lg ">
@@ -172,9 +174,15 @@
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
             <li class="breadcrumb-item text-sm"><a class="opacity-5 text-white" href="javascript:;">Pages</a></li>
-            <li class="breadcrumb-item text-sm text-white active" aria-current="page">Feed Result</li>
+            <li class="breadcrumb-item text-sm text-white active" aria-current="page"><button><a href="dashboard.html">Dashboard</a></button></li>
+            <li class="breadcrumb-item text-sm text-white active" aria-current="page"><button><a href="RechargeRequest.html">WithdrawalRequest</a></button></li>
+            <li class="breadcrumb-item text-sm text-white active" aria-current="page"><button><a href="RechargeHistory.html">WithdrawHistory</a></button></li>
+            <li class="breadcrumb-item text-sm text-white active" aria-current="page"><button><a href="WithdrawalRequest.html">WithdrawalRequest</a></button></li>
+            <li class="breadcrumb-item text-sm text-white active" aria-current="page"><button><a href="WithdrawHistory.html">WithdrawHistory</a></button></li>
+            <li class="breadcrumb-item text-sm text-white active" aria-current="page"><button><a href="bar.html">Win Percentage</a></button></li>
+            <li class="breadcrumb-item text-sm text-white active" aria-current="page"><button><a href="passAdmin.html">Change Password</a></button></li>
           </ol>
-          <h6 class="font-weight-bolder text-white mb-0">Feed Result</h6>
+          <h6 class="font-weight-bolder text-white mb-0">Withdrawal Request</h6>
         </nav>
         
       </div>
@@ -183,98 +191,37 @@
     <div class="container-fluid py-4">
       <div class="row">
         <div class="col-12">
-          <div class="card mb-4 CardPos">
+          <div class="card mb-4">
             <div class="card-header pb-0">
-              <h6>Feed Result</h6>
+              <h6>RechargeRequests</h6>
             </div>
+
             <div class="card-body px-0 pt-0 pb-2">
               <div class="table-responsive p-0">
-                <div class="Container">
-                    <form action="/saveresult" method="post">{% csrf_token %}
-                        <div class="inputContent">
-                            <form action="">
-                                <div class="time">
-                                    <label>Time</label>
-                                    <select name="time" id="time">
-                                        <option value="09:30am">09:30am</option>
-                                        <option value="09:45am">09:45am</option>
-                                        <option value="10:00am">10:00am</option>
-                                        <option value="10:15am">10:15am</option>
-                                        <option value="10:30am">10:30am</option>
-                                        <option value="10:45am">10:45am</option>
-                                        <option value="11:00am">11:00am</option>
-                                        <option value="11:15am">11:15am</option>
-                                        <option value="11:30am">11:30am</option>
-                                        <option value="11:45am">11:45am</option>
-                                        <option value="12:00pm">12:00pm</option>
-                                        <option value="12:15pm">12:15pm</option>
-                                        <option value="12:30pm">12:30pm</option>
-                                        <option value="12:45pm">12:45pm</option>
-                                        <option value="13:00pm">13:00pm</option>
-                                        <option value="13:15pm">13:15pm</option>
-                                        <option value="13:30pm">13:30pm</option>
-                                        <option value="13:45pm">13:45pm</option>
-                                        <option value="14:00pm">14:00pm</option>
-                                        <option value="14:15pm">14:15pm</option>
-                                        <option value="14:30pm">14:30pm</option>
-                                        <option value="14:45pm">14:45pm</option>
-                                        <option value="15:00pm">15:00pm</option>
-                                        <option value="15:15pm">15:15pm</option>
-                                        <option value="15:30pm">15:30pm</option>
-                                        <option value="15:45pm">15:45pm</option>
-                                        <option value="16:00pm">16:00pm</option>
-                                        <option value="16:15pm">16:15pm</option>
-                                        <option value="16:30pm">16:30pm</option>
-                                        <option value="16:45pm">16:45pm</option>
-                                        <option value="17:00pm">17:00pm</option>
-                                        <option value="17:15pm">17:15pm</option>
-                                        <option value="17:30pm">17:30pm</option>
-                                        <option value="17:45pm">17:45pm</option>
-                                        <option value="18:00pm">18:00pm</option>
-                                        <option value="18:15pm">18:15pm</option>
-                                        <option value="18:30pm">18:30pm</option>
-                                        <option value="18:45pm">18:45pm</option>
-                                        <option value="19:00pm">19:00pm</option>
-                                        <option value="19:15pm">19:15pm</option>
-                                        <option value="19:30pm">19:30pm</option>
-                                        <option value="19:45pm">19:45pm</option>
-                                        <option value="20:00pm">20:00pm</option>
-                                        <option value="20:15pm">20:15pm</option>
-                                        <option value="20:30pm">20:30pm</option>
-                                        <option value="20:45pm">20:45pm</option>
-                                        <option value="21:00pm">21:00pm</option>
-                                        <option value="21:15pm">21:15pm</option>
-                                        <option value="21:30pm">21:30pm</option>
-                                        <option value="21:45pm">21:45pm</option>
-                                        <option value="22:00pm">22:00pm</option>
-                                    
-                                    </select>
-                                </div>
-                    
-                                <div class="alphabet-container">
-                                    <script>
-                                        // Create boxes for alphabets A to T with input fields below them
-                                        let alphabets = 'ABCDEFGHIJKLMNOPQRST'.split('');
-                                
-                                        for(let i = 0; i < alphabets.length; i++) {
-                                            document.write(`
-                                                <div class="alphabet-box">
-                                                    <div class="alphabet">${alphabets[i]}</div>
-                                                    <input type="text" id="${alphabets[i]}" name="${alphabets[i]}">
-                                                </div>
-                                            `);
-                                        }
-                                    </script>
-                                </div>
-                        </div>
-                        <button class="btn btn-primary btn-sm mb-2 mt-2" type="submit">Save Result</button>
-                    </form>
-              </div>
+                <!-- {% if rows %} -->
+                <table class="table align-items-center justify-content-center mb-0" id="withdrawRequest">
+                  <thead>
+                    <tr>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder ">Request Id</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder ps-2">Account Details</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder ps-2">Withdrawal Amount</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder text-center ps-2">User</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder text-center ps-2">Requested At</th>
+                    </tr>
+                  </thead>
+                  <tbody >
+                    <!-- Table rows will be dynamically added here -->
+                      
+                  </tbody>
+                  
+                </table>
+                
               </div>
             </div>
           </div>
         </div>
       </div>
+      
     </div>
   </main>
   <div class="fixed-plugin">
@@ -349,31 +296,11 @@
       </div>
     </div>
   </div>
-
-  <form id="overrideForm" action="/overrideResult" method="post">
-    {% csrf_token %}
-    <input type="hidden" name="newData" value="{{ new_data }}">
-    <!-- Include other input fields here -->
-    <input type="submit" style="display: none;">
-  </form>
-
-  <script>
-    // JavaScript to display a confirmation alert
-    {% if existing_data %}
-        var confirmed = confirm("Data already exists for the given date and time. Do you want to update the existing data?");
-        if (confirmed) {
-          document.getElementById('overrideForm').submit();
-        } else {
-          window.location.href='/feedresult'
-        }
-    {% endif %}
-</script>
-          
   <!--   Core JS Files   -->
-  <script src="/static/js/core/popper.min.js"></script>
-  <script src="/static/js/core/bootstrap.min.js"></script>
-  <script src="/static/js/plugins/perfect-scrollbar.min.js"></script>
-  <script src="/static/js/plugins/smooth-scrollbar.min.js"></script>
+  <script src="/assets/js/core/popper.min.js"></script>
+  <script src="/assets/js/core/bootstrap.min.js"></script>
+  <script src="/assets/js/plugins/perfect-scrollbar.min.js"></script>
+  <script src="/assets/js/plugins/smooth-scrollbar.min.js"></script>
   <script>
     var win = navigator.platform.indexOf('Win') > -1;
     if (win && document.querySelector('#sidenav-scrollbar')) {
@@ -386,18 +313,42 @@
   <!-- Github buttons -->
   <script async defer src="https://buttons.github.io/buttons.js"></script>
   <!-- Control Center for Soft Dashboard: parallax effects, scripts for the example pages etc -->
-  <script src="/static/js/argon-dashboard.min.js?v=2.0.4"></script>
+  <script src="/assets/js/argon-dashboard.min.js?v=2.0.4"></script>
 
-  <!-- Script to show message as pop-up -->
+
+
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
   <script>
-    {% if messages %}
-        {% for message in messages %}
-            alert("{{ message }}");
-        {% endfor %}
-    {% endif %}
+    $(document).ready(function() {
+      $('.update-credit-button').click(function(event) {
+        event.preventDefault();
+  
+        var username = $(this).data('username');
+        var credit = $(this).data('credit');
+  
+        $('<input>').attr({
+          type: 'hidden',
+          name: 'data_username',
+          value: username
+        }).appendTo('#' + username); 
+  
+        $('<input>').attr({
+          type: 'hidden',
+          name: 'data_credit',
+          value: credit
+        }).appendTo('#' + username);
+  
+        $('#' + username).submit();
+      });
+    });
   </script>
 
-</body>
 
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <!-- Include DataTables JavaScript -->
+  <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+
+</body>
 
 </html>

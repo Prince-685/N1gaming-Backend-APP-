@@ -13,6 +13,7 @@ class PaymentForm(models.Model):
     STATUS_CHOICES = [
         ('approve', 'Approve'),
         ('reject', 'Reject'),
+        ('pending', 'Pending'),
     ]
     amount = models.PositiveIntegerField(validators=[MaxValueValidator(10000)])
     txn_id=models.CharField(max_length=25)
@@ -25,6 +26,18 @@ class PaymentForm(models.Model):
     ])
     upi_id=models.CharField(max_length=25, blank=True)
     user=models.ForeignKey(CustomUsers, db_column='email', on_delete=models.CASCADE)
-    status=models.CharField(max_length=50, choices=STATUS_CHOICES, blank=True)
+    status=models.CharField(max_length=50, choices=STATUS_CHOICES, default='pending')
+    created_at = models.DateTimeField(auto_now_add=True)
 
-
+class WithdrawalHistory(models.Model):
+    
+    STATUS_CHOICES = [
+        ('approve', 'Approve'),
+        ('reject', 'Reject'),
+        ('pending', 'Pending'),
+    ]
+    withdrawal_id=models.CharField(max_length=25)
+    amount = models.PositiveIntegerField(validators=[MaxValueValidator(10000)])
+    user=models.ForeignKey(CustomUsers, db_column='email', on_delete=models.CASCADE)
+    status=models.CharField(max_length=50, choices=STATUS_CHOICES, default='pending')
+    created_at = models.DateTimeField(auto_now_add=True)
