@@ -97,7 +97,8 @@ WSGI_APPLICATION = 'N1gamingapp.wsgi.application'
 #         }
 # }
 DATABASES = {
-	"default": dj_database_url.config(default='postgres://gprince685:vhGJTxK8CWYdVzTaIt2rcrxJQ1BNs1K3@dpg-cp2qc34f7o1s73blgto0-a.singapore-postgres.render.com/n1gamingapk')
+	# "default": dj_database_url.config(default='postgres://gprince685:vhGJTxK8CWYdVzTaIt2rcrxJQ1BNs1K3@dpg-cp2qc34f7o1s73blgto0-a.singapore-postgres.render.com/n1gamingapk')
+    "default": dj_database_url.config(default='postgres://n1gamingapk_agjl_user:gwBHT2riGf3xfT3Lqz1N3JGD13s81O3H@dpg-cphu796ct0pc73fjfgs0-a.virginia-postgres.render.com/n1gamingapk_agjl')
 }
 
 

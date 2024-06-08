@@ -7,7 +7,7 @@ from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.views import APIView
 from rest_framework.authentication import TokenAuthentication
-
+from API.serializers import BankDetailSerializer
 from Payment.serializers import PaymentFormSerializer, WithdrawalHistorySerializer
 from Payment.models import PaymentForm, WithdrawalHistory
 from .permissions import IsSuperUser
@@ -110,8 +110,18 @@ class WithdrawRequestAPIView(APIView):
     def get(self,request):
         pending_withdraw_requests = WithdrawalHistory.objects.filter(status='pending')
         if pending_withdraw_requests.exists():
-            serializer = WithdrawalHistorySerializer(pending_withdraw_requests, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            response_data = []
+            for withdraw_request in pending_withdraw_requests:
+                withdraw_data = WithdrawalHistorySerializer(withdraw_request).data
+                user_id = withdraw_data['user']
+                try:
+                    user = CustomUsers.objects.get(id=user_id)
+                    bank_detail = BankDetailSerializer(user).data
+                    withdraw_data['bank_details'] = bank_detail
+                except CustomUsers.DoesNotExist:
+                    withdraw_data['bank_details'] = None
+                response_data.append(withdraw_data)
+            return Response(response_data, status=status.HTTP_200_OK)
         else:
             return Response({'message': 'No pending recharge requests'}, status=status.HTTP_204_NO_CONTENT) 
         
@@ -161,7 +171,14 @@ class RechargeHistoryAPIView(APIView):
         history_payments = PaymentForm.objects.filter(status__in=['approve', 'reject'])
         if history_payments.exists():
             serializer = PaymentFormSerializer(history_payments, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            modified_data = []
+            for payment in serializer.data:
+                user = CustomUsers.objects.get(pk=payment['user'])
+                payment['user']=user.email
+                # Exclude 'payment_image' from payment data
+                payment.pop('payment_image', None)
+                modified_data.append(payment)
+            return Response(modified_data, status=status.HTTP_200_OK)
         else:
             return Response({'message': 'No recharge history available'}, status=status.HTTP_204_NO_CONTENT)
         

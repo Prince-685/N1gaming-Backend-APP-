@@ -67,8 +67,7 @@ class PaymentFormAPIView(APIView):
             'payment_image': os.path.join(settings.MEDIA_URL, file_path),
             'payment_method': request.data.get('payment_method'),
             'upi_id': request.data.get('upi_id',""),
-            'user': token.user.pk,
-            'status': request.data.get('status', '') 
+            'user': token.user.pk, 
         }
 
         serializer = PaymentFormSerializer(data=data)
@@ -82,8 +81,19 @@ class WithdrawalRequestAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        serializer = WithdrawalHistorySerializer(data=request.data)
+        data=request.data
+        user=request.user
+        amount=data['amount']
+        data['user']=user.pk
+        if amount<100:
+            return Response({'message':'Minimum withrawal amount should be 100'}, status=status.HTTP_400_BAD_REQUEST)
+
+        elif amount>user.balance:
+            return Response({'message':'Insufficient Balance'}, status=status.HTTP_400_BAD_REQUEST)
+        serializer = WithdrawalHistorySerializer(data=data)
         if serializer.is_valid():
             serializer.save(user=request.user)
+            user.balance=user.balance-data['amount']
+            user.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'message':serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
