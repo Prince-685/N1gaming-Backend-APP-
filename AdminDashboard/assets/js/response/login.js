@@ -13,13 +13,11 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
         try {
-            const response = await fetch('https://admin-soft.onrender.com/api/v1/auth/login', {
+            const response = await fetch('http://127.0.0.1:8000/adminlogin/', {
                 method: 'POST',
                 body: JSON.stringify(jsonData),
                 headers: {
-                    // 'Authorization': 'Bearer YOUR_TOKEN_HERE',
                     'Content-Type': 'application/json', // Specify JSON content type
-                    // Add other headers if needed
                 },
             });
             if (!response.ok) {
@@ -28,8 +26,8 @@ document.addEventListener('DOMContentLoaded', function () {
             }
             const data = await response.json();
             console.log(data);
-            localStorage.setItem('jwt', JSON.stringify(data.token));
-            window.location.href = '/dashboard.html';
+            localStorage.setItem('token', JSON.stringify(data.token));
+            window.location.href = '/dashboard';
         } catch (error) {
             console.error('Error:', error.message);
             responseDiv.textContent = error.message; // Display error message

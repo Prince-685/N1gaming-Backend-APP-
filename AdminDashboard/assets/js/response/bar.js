@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     slider.addEventListener('input', function () {
         label.textContent = slider.value;
     });
-    const res=await fetch('https://admin-soft.onrender.com/api/v1/win-percent/get-percent',{
+    const res=await fetch('http://127.0.0.1:8000/percent/',{
         method: 'GET',
         headers: {
             'Content-Type': 'application/json'

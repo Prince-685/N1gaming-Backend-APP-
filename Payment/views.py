@@ -7,8 +7,9 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
-from .models import PaymentForm, PaymentQRUPI
-from .serializers import PaymentQRUPISerializer, PaymentFormSerializer, WithdrawalHistorySerializer
+from .models import PaymentForm, PaymentQRUPI, WithdrawalHistory
+from .serializers import PaymentFormCustomSerializer, PaymentQRUPISerializer, PaymentFormSerializer, WithdrawalHistoryCustomSerializer, WithdrawalHistorySerializer
+from itertools import chain
 
 # Create your views here.
 
@@ -97,3 +98,26 @@ class WithdrawalRequestAPIView(APIView):
             user.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response({'message':serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+    
+
+class AccountHistoryAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        # Fetch payment and withdrawal records
+        try:
+            payment_records = PaymentForm.objects.filter(user=request.user.pk)
+            payment_serializer = PaymentFormCustomSerializer(payment_records, many=True)
+        except PaymentForm.DoesNotExist:
+            return Response({"message":"No Records Found"}, status=status.HTTP_204_NO_CONTENT)
+        try:
+            withdrawal_records = WithdrawalHistory.objects.filter(user=request.user.pk)
+            withdrawal_serializer = WithdrawalHistoryCustomSerializer(withdrawal_records, many=True)
+        except WithdrawalHistory.DoesNotExist:
+            pass
+
+        # Combine and sort the data
+        combined_data = list(chain(payment_serializer.data, withdrawal_serializer.data))
+        sorted_combined_data = sorted(combined_data, key=lambda x: x['created_at'], reverse=True)
+
+        return Response(sorted_combined_data, status=status.HTTP_200_OK)

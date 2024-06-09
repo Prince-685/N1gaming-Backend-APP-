@@ -1,16 +1,16 @@
 document.addEventListener('DOMContentLoaded', async function () {
     try {
-        const token = localStorage.getItem('jwt').match(/"([^"]*)"/)[1]; // Retrieve token from local storage
+        const token = localStorage.getItem('Token').match(/"([^"]*)"/)[1]; // Retrieve token from local storage
 
         if (!token) {
             throw new Error('Token not found');
         }
 
         // Fetch data from API endpoint
-        const response = await fetch('https://admin-soft.onrender.com/api/v1/dashboard', {
+        const response = await fetch('http://127.0.0.1:8000/dashboard', {
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}` // Include the token in the Authorization header
+                'Authorization': `Token ${token}` // Include the token in the Authorization header
             },
         });
 

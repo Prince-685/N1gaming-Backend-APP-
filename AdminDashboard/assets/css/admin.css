@@ -4,56 +4,54 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-     /* justify-content: center;  */
-    height: 100vh; 
-    background-image: url(/static/img/vr-bg.jpg);
-    
-    
-}
-
-.container{
-    width: 100%;
+    /* justify-content: center; */
     height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    background-image: url(../img/vr-bg.jpg);
+    
+}
+.img-container img {
+    width: 70%;
+    max-width: 400px;
+    margin-top: 20px;
+    margin-bottom: 50px;
+    margin-left: 15%;
+    overflow: hidden;
+
+}
+.container {
     text-align: center;
+    width: 50%;
+    max-width: 500px;
+    padding: 0px;
 }
-
-.container .content{
-    /* background-color: rgb(124, 118, 118); */
-    margin-top: 10%;
-    width: 500px;
-    height: 280px;
-    /* border: 2px solid black; */
-    /* border-radius: 10px; */
+.container h2 {
+    margin-bottom: 20px;
+    color: #080808;
+    font-size: xxx-large;
 }
-
-.container .content input{
-    width: 80%;
-    height: 35px;
-    margin-bottom: 10px;
+.input {
+    margin-bottom: 20px;
+}
+.input input {
+    width: 60%;
+    padding: 10px;
+    border: 1px solid #ccc;
     border-radius: 5px;
-    padding-left: 5px;
     font-size: 16px;
 }
-
-.container .content .Login{
-    width: 70%;
-    height: 40px;
-    background-color: black;
-    color: white;
+.Login {
+    width: 60%;
+    padding: 10px;
+    background-color: rgba(24, 9, 240, 0.716);
+    color: #f6fcfb;
     font-size: 20px;
     font-weight: bold;
     border-radius: 10px;
-    border: 1px solid black;
-    margin-top: 10px;
-    cursor:pointer;
-    margin-bottom: 10px;
-} 
-
-.container .content .Login:hover{
-    background-color: white;
-    color: black;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
 }
-
+.Login:hover {
+    background-color: #3c41d464;
+    color: #000;
+}

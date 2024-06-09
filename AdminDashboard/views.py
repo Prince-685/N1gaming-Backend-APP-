@@ -12,11 +12,48 @@ from Payment.serializers import PaymentFormSerializer, WithdrawalHistorySerializ
 from Payment.models import PaymentForm, WithdrawalHistory
 from .permissions import IsSuperUser
 from django.contrib.auth.hashers import check_password
-
-
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import login
+from django.views.decorators.csrf import csrf_exempt
 
 def Admin_login_page(request):
     return render(request,'adminLogin.html')
+
+
+@login_required
+def Dashboard_page(request):
+    return render(request, 'dashboard.html')
+
+
+@login_required
+def RechargeRequest_page(request):
+    return render(request, 'RechargeRequest.html')
+
+
+@login_required
+def RechargeHistory_page(request):
+    return render(request, 'RechargeHistory.html')
+
+
+@login_required
+def WithdrawalRequest_page(request):
+    return render(request, 'WithdrawalRequest.html')
+
+
+@login_required
+def WithdrawalHistory_page(request):
+    return render(request, 'WithdrawHistory.html')
+
+
+@login_required
+def SetPercent_page(request):
+    return render(request, 'bar.html')
+
+
+@login_required
+def ChangePassword_page(request):
+    return render(request, 'passAdmin.html')
+
 
 class AdminLoginAPIView(APIView):
     def post(self, request):
@@ -31,13 +68,10 @@ class AdminLoginAPIView(APIView):
                 # User is authenticated
                 # Delete any existing token
                 Token.objects.get(user=user).delete()
-                
                 # Generate a new token
                 token, created = Token.objects.get_or_create(user=user)
-                
-                return Response({'message':'Logged in Successfully','token': token.key}, status=status.HTTP_200_OK)
-            
-            
+                login(request, user)
+                return Response({'message':'Logged in Successfully','token': token.key}, status=status.HTTP_200_OK)            
         else:
             # Authentication failed
             return Response({'message': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
@@ -49,30 +83,7 @@ class AdminLoginAPIView(APIView):
 
 #     def get(self,request):
 
-
-class SetPercentAPIView(APIView):
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsSuperUser]
-    def get(self,request):
-        try:
-            win_pencent_instance=Win_Percent.objects.get(pk=1)
-            per=win_pencent_instance.percent
-        
-        except Win_Percent.DoesNotExist:
-            per=0
-        return render(request,'bar.html',{'percent':per})
     
-    def post(self,request):
-        per=request.data.get('percent')
-        try:
-            percent_instance = Win_Percent.objects.get(pk=1)
-            percent_instance.percent = per
-            percent_instance.save()
-        except Win_Percent.DoesNotExist:
-            Win_Percent.objects.create(percent=per)
-        return render(request,'bar.html',{'percent':per})
-
-
 
 class RechargeRequestAPIView(APIView):
     authentication_classes = [TokenAuthentication]
@@ -194,3 +205,26 @@ class WithDrawalHistoryAPIView(APIView):
         else:
             return Response({'message': 'No recharge history available'}, status=status.HTTP_204_NO_CONTENT)
         
+
+class WinPercentAPIView(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsSuperUser]
+
+    def get(self, request):
+        try:
+            instance= Win_Percent.objects.get(pk=1)
+            return Response({'percent': instance.percent}, status=status.HTTP_200_OK)
+        except Win_Percent.DoesNotExist:
+            percent=0
+            return Response({'percent':percent}, status=status.HTTP_200_OK)
+        
+    def post(self, request):
+        percent=request.data.get('percent')
+        try:
+            instance= Win_Percent.objects.get(pk=1)
+            instance.percent=percent
+            instance.save()
+            return Response({'percent': instance.percent,"message":"Win percentage set Successfully"}, status=status.HTTP_200_OK)
+        except Win_Percent.DoesNotExist:
+            Win_Percent.objects.create(percent=percent)
+            return Response({'percent': instance.percent,"message":"Win percentage set Successfully"}, status=status.HTTP_201_CREATED)
