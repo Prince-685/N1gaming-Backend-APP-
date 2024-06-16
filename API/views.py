@@ -155,7 +155,8 @@ class ResetPasswordRequestAPIView(APIView):
     def post(self, request):
         email = request.data.get('email')
         user = get_object_or_404(CustomUsers, email=email)
-        otp=send_otp(request.data['email'])
+        subject="Password Reset"
+        otp = reset_password_message(email,subject)
         user.otp=otp
         user.last_otp_send_time=datetime.now()
         user.save()
