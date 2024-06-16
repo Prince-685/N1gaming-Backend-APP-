@@ -11,28 +11,32 @@ document.addEventListener('DOMContentLoaded', function () {
         formData.forEach((value, key) => {
             jsonData[key] = value;
         });
-        console.log(JSON.stringify(jsonData))
+        console.log(jsonData)
+
         try {
-            const token = localStorage.getItem('jwt').match(/"([^"]*)"/)[1];
+            const token = localStorage.getItem('token').match(/"([^"]*)"/)[1];
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
             console.log(token);
-            const response = await fetch('https://admin-soft.onrender.com/api/v1/auth/update-password', {
-                method: 'POST',
+
+            const response = await fetch('http://127.0.0.1:8000/update_password/', {
+                method: 'PATCH',
                 body: JSON.stringify(jsonData),
                 headers: {
-                    'Authorization': `Bearer ${token}`,
+                    'Authorization': "Token " + token.replace(/"/g, ''),
                     'Content-Type': 'application/json', // Specify JSON content type
-                    // Add other headers if needed
+                    'X-CSRFToken': csrfToken  // Include CSRF token in the request headers
                 },
             });
+
             if (!response.ok) {
                 const errorData = await response.json();
-                throw new Error(errorData.message); // Throw an error with the error message from the server
+                throw new Error(errorData.error || 'An error occurred'); // Throw an error with the error message from the server
             }
+            
             const data = await response.json();
             console.log(data);
-            localStorage.setItem('jwt', JSON.stringify(data.token));
-            alert(data.data);
-            window.location.reload();
+            alert(data.message);
+            window.location.href = '/';
         } catch (error) {
             console.error('Error:', error.message);
             responseDiv.textContent = error.message; // Display error message

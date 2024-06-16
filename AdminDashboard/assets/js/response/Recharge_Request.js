@@ -1,7 +1,6 @@
 document.addEventListener('DOMContentLoaded', async function () {
     try {
-
-        const tableBody = document.getElementById('withdrawRequest');
+        const tableBody = document.getElementById('RechargeRequest');
 
         const token = localStorage.getItem('token').match(/"([^"]*)"/)[1]; // Retrieve token from local storage
         if (!token) {
@@ -9,7 +8,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         }
 
         // Fetch data from API endpoint
-        const response = await fetch('http://127.0.0.1:8000/admindashboard/withdraw_request', {
+        const response = await fetch('http://127.0.0.1:8000/admindashboard/recharge_request', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -28,7 +27,6 @@ document.addEventListener('DOMContentLoaded', async function () {
             return;
         }
 
-
         // Check if the response is successful
         if (!response.ok) {
             throw new Error('Failed to fetch data');
@@ -36,6 +34,7 @@ document.addEventListener('DOMContentLoaded', async function () {
 
         // Parse the JSON response
         const data = await response.json();
+        console.log(data)
         
         tableBody.innerHTML = ''; 
         
@@ -47,9 +46,11 @@ document.addEventListener('DOMContentLoaded', async function () {
             tableBody.appendChild(row);
         } else {
             const arrayOfArrays = data.map(obj => [
-                obj.withdrawal_id,
-                obj.bank_details,
+                obj.txn_id,
                 obj.amount,
+                obj.payment_image,
+                obj.payment_method,
+                obj.upi_id,
                 obj.user,
                 obj.created_at,
                 obj.status,
@@ -59,23 +60,23 @@ document.addEventListener('DOMContentLoaded', async function () {
             $(tableBody).DataTable({
                 data: arrayOfArrays, // Use the data from the API response
                 columns: [
-                    { title: "Withdrawal Id" },
-                    {  
-                        title: "Bank Details",
+                    { title: "Recharge Id" },
+                    { title: "Recharge Amt" },
+                    { 
+                        title: "Payment Image",
                         render: function (data, type, row) {
-                            const bankDetails = row[1];
-                            return `Account No: ${bankDetails.account_number} <br>
-                                    Account Holder Name: ${bankDetails.holder_name} <br>
-                                    IFSC Code: ${bankDetails.ifsc_code} <br>
-                                    UPI Id: ${bankDetails.upi_id}`;
+                            const img_link = row[2];
+                            const fullUrl = 'http://127.0.0.1:8000' + img_link;
+                            return `<a href="${fullUrl}" target="_blank" class="payment-image-link">View Image</a>`;
                         }
                     },
-                    { title: "Withdraw Amt" },
+                    { title: "Payment Method" },
+                    { title: "UPI Id" },
                     { title: "User" },
                     {  
                         title: "Requested At",
                         render: function (data, type, row) {
-                            const localdate = new Date(row[4]);
+                            const localdate = new Date(row[6]);
                             const kolkataTime = localdate.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
                             
                             const [datePart, timePart] = kolkataTime.split(',');
@@ -90,8 +91,8 @@ document.addEventListener('DOMContentLoaded', async function () {
                         searchable: false, // Disable searching on this column
                         render: function (data, type, row) {
                             // Render accept and decline buttons HTML
-                            return `<button class="Login" onclick="ApproveWithdrawal('${row[0]}')">Accept</button>
-                                    <button class="Login" onclick="RejectWithdrawal('${row[0]}')">Decline</button>`;
+                            return `<button class="Login" onclick="ApproveRecharge('${row[0]}')">Accept</button>
+                                    <button class="Login" onclick="RejectRecharge('${row[0]}')">Decline</button>`;
                         }
                     }
                 ],
@@ -113,71 +114,78 @@ document.addEventListener('DOMContentLoaded', async function () {
     }
 });
 
-
-async function ApproveWithdrawal(withdrawal_id) {
-    try {
-        const token = localStorage.getItem('token').match(/"([^"]*)"/)[1]; // Retrieve token from local storage
-
-        if (!token) {
-            throw new Error('Token not found');
-        }
-        const s={'status':'approve','withdrawal_id': withdrawal_id};
-        // Send a request to accept the transaction
-        const response = await fetch(`http://127.0.0.1:8000/admindashboard/withdraw_request`, {
-            method: 'PATCH',
-            body: JSON.stringify(s),
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Token ${token}`
-            },
-        });
-
-        if (!response.ok) {
-            throw new Error('Failed to accept transaction');
-        }
-        alert('Withdrawal Request Accepted Successfully')
-        // Handle success, reload the page for example
-        location.reload();
-    } catch (error) {
-        console.error('Error accepting transaction:', error.message);
-        // Handle errors, display error message to the user, etc.
-    }
-}
-
-async function RejectWithdrawal(withdrawal_id) {
-    try {
-        const token = localStorage.getItem('token').match(/"([^"]*)"/)[1]; // Retrieve token from local storage
-
-        if (!token) {
-            throw new Error('Token not found');
-        }
-        const s={'status':'reject','withdrawal_id': withdrawal_id};
-        // Send a request to decline the transaction
-        const response = await fetch(`http://127.0.0.1:8000/admindashboard/withdraw_request`, {
-            method: 'PATCH',
-            body: JSON.stringify(s),
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Token ${token}`
-            },
-        });
-
-        if (!response.ok) {
-            throw new Error('Failed to Reject Withdrawal');
-        }
-        alert('Withdrawal Request Rejected Successfully')
-        // Handle success, reload the page for example
-        location.reload();
-    } catch (error) {
-        console.error('Error Rejecting Withdrawal:', error.message);
-        // Handle errors, display error message to the user, etc.
-    }
-}
-
+// Add custom CSS for the row, title, and payment image link
 const style = document.createElement('style');
 style.innerHTML = `
     .align-center {
         text-align:center;
     }
+    .payment-image-link {
+        color: #3f51b5; /* Indigo text color */
+        font-weight: bold;
+        text-decoration: underline;
+    }
 `;
 document.head.appendChild(style);
+
+
+
+async function ApproveRecharge(txn_id) {
+    try {
+        const token = localStorage.getItem('token').match(/"([^"]*)"/)[1]; // Retrieve token from local storage
+
+        if (!token) {
+            throw new Error('Token not found');
+        }
+        const s={'status':'approve','txn_id': txn_id};
+        // Send a request to accept the transaction
+        const response = await fetch(`http://127.0.0.1:8000/admindashboard/recharge_request`, {
+            method: 'PATCH',
+            body: JSON.stringify(s),
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Token ${token}`
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to accept recharge transaction');
+        }
+        alert('Recharge Request Accepted SuccessFully')
+        // Handle success, reload the page for example
+        location.reload();
+    } catch (error) {
+        console.error('Error accepting recharge transaction:', error.message);
+        // Handle errors, display error message to the user, etc.
+    }
+}
+
+async function RejectRecharge(txn_id) {
+    try {
+        const token = localStorage.getItem('token').match(/"([^"]*)"/)[1]; // Retrieve token from local storage
+
+        if (!token) {
+            throw new Error('Token not found');
+        }
+        const s={'status':'reject','txn_id': txn_id};
+        // Send a request to decline the transaction
+        const response = await fetch(`http://127.0.0.1:8000/admindashboard/recharge_request`, {
+            method: 'PATCH',
+            body: JSON.stringify(s),
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Token ${token}`
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to Reject Recharge');
+        }
+        alert('Recharge Request Rejected SuccessFully')
+        // Handle success, reload the page for example
+        location.reload();
+    } catch (error) {
+        console.error('Error Rejecting Recharge:', error.message);
+        // Handle errors, display error message to the user, etc.
+    }
+}

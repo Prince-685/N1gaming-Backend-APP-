@@ -3,6 +3,9 @@ import random,time
 from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import check_password
 from django.core.mail import send_mail
+from django.template import loader
+from django.template.loader import render_to_string
+
 
 def authenticate_user(email, password):
     User = get_user_model()
@@ -15,22 +18,43 @@ def authenticate_user(email, password):
     return None
 
 
-def send_otp(email):
+def send_otp(email,subject,html_message):
 
     otp = ''.join(random.choices('0123456789', k=6))
-    subject = 'OTP for Email Verification'
     message = f'Your OTP is: {otp}'
     from_email = 'pagalno351@gmail.com'  # Your email address
     to_email = email
-    send_mail(subject, message, from_email, [to_email])
+    send_mail(subject, message, from_email, [to_email], html_message=html_message)
     return otp
 
 def handle_otp_for_user(user, email):
-        
-                otp = send_otp(email)
+                html_message=email_confirmation_message(email)
+                subject="Registration Verification"
+                otp = send_otp(email,subject,html_message)
                 user.otp = otp
                 user.last_otp_send_time = datetime.now()
                 user.save()
+
+def email_confirmation_message(to_email):
+    otp = ''.join(random.choices('0123456789', k=6))
+    context = {
+        'email': to_email,
+        'timestamp': datetime.now().strftime("%m/%d/%Y %H:%M:%S"),
+        'confirmation_code': otp,
+    }
+    
+    return loader.render_to_string('email-confirmation.html', context)
+
+def reset_password_message(to_email,subject):
+    otp = ''.join(random.choices('0123456789', k=6))
+    context = {
+        'email': to_email,
+        'timestamp': datetime.now().strftime("%m/%d/%Y %H:%M:%S"),
+        'confirmation_code': otp,
+    }
+    message = render_to_string("forget-password.html", context)
+    send_mail(subject, '', 'pagalno351@gmail.com', [to_email], html_message=message)
+    return otp
 
 def generate_unique_id():
     # Get the current timestamp

@@ -16,7 +16,7 @@ class PaymentForm(models.Model):
         ('pending', 'Pending'),
     ]
     amount = models.PositiveIntegerField(validators=[MaxValueValidator(10000)])
-    txn_id=models.CharField(max_length=25)
+    txn_id=models.CharField(unique=True,max_length=25)
     payment_image = models.CharField(max_length=255)
     payment_method =models.CharField(max_length=50, choices=[
         ('Paytm_UPI', 'Paytm UPI'),
@@ -36,7 +36,7 @@ class WithdrawalHistory(models.Model):
         ('reject', 'Reject'),
         ('pending', 'Pending'),
     ]
-    withdrawal_id=models.CharField(max_length=25)
+    withdrawal_id=models.CharField(unique=True,max_length=25)
     amount = models.PositiveIntegerField(validators=[MaxValueValidator(10000)])
     user=models.ForeignKey(CustomUsers, db_column='email', on_delete=models.CASCADE)
     status=models.CharField(max_length=50, choices=STATUS_CHOICES, default='pending')

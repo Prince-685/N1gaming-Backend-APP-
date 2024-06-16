@@ -1,6 +1,6 @@
 from django.shortcuts import render
-import datetime as dt
-from API.models import CustomUsers, Win_Percent
+from datetime import date
+from API.models import TSN, CustomUsers, Transaction, Win_Percent
 from API.utils import authenticate_user
 from rest_framework.response import Response
 from rest_framework import status
@@ -14,7 +14,9 @@ from .permissions import IsSuperUser
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login
-from django.views.decorators.csrf import csrf_exempt
+from django.utils.dateparse import parse_date
+
+
 
 def Admin_login_page(request):
     return render(request,'adminLogin.html')
@@ -77,13 +79,106 @@ class AdminLoginAPIView(APIView):
             return Response({'message': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
 
 
-# class AdminDashboardAPIView(APIView):
-#     authentication_classes = [TokenAuthentication]
-#     permission_classes = [IsSuperUser]
+class AdminDashboardDataAPIView(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsSuperUser]
+    def get(self,request):
 
-#     def get(self,request):
+        today_bets,today_bet_loss,today_bets_won,today_profit=0,0,0,0
+        overall_bets,overall_bet_loss,overall_bets_won,overall_profit=0,0,0,0
+        try:
+            tsn_instance=TSN.objects.all()
+            for item in tsn_instance:
+                if item.transaction.date==date.today():
+                    today_bets+=item.playedpoints
+                    if item.winning>0:
+                        today_bets_won+=item.winning
+                    else:
+                        today_bet_loss+=item.playedpoints
+                else:
+                    overall_bets+=item.playedpoints
+                    if item.winning>0:
+                        overall_bets_won+=item.winning
+                    else:
+                        overall_bet_loss+=item.playedpoints
 
+            today_profit=today_bets-today_bets_won
+            overall_bets+=today_bets
+            overall_bet_loss+=today_bet_loss
+            overall_bets_won+=today_bets_won
+            overall_profit=overall_bets-overall_bets_won
+            response_data = {
+                "today_bets": today_bets,
+                "today_bet_loss": today_bet_loss,
+                "today_bets_won": today_bets_won,
+                "today_profit": today_profit,
+                "overall_bets": overall_bets,
+                "overall_bet_loss": overall_bet_loss,
+                "overall_bets_won": overall_bets_won,
+                "overall_profit": overall_profit,
+            }
+
+            return Response(response_data,status=status.HTTP_200_OK)
+
+        except TSN.DoesNotExist:
+            context = {
+                "today_bets": today_bets,
+                "today_bet_loss": today_bet_loss,
+                "today_bets_won": today_bets_won,
+                "today_profit": today_profit,
+                "overall_bets": overall_bets,
+                "overall_bet_loss": overall_bet_loss,
+                "overall_bets_won": overall_bets_won,
+                "overall_profit": overall_profit,
+            }
+            return render(request, "dashboard.html",context,status=status.HTTP_200_OK)
+        
+        except Exception as e:
+            return Response({"message": str(e)}, status=status.HTTP_400_BAD_REQUEST)
     
+class UserListAPI(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsSuperUser]
+
+    def get(self, request):
+        try:
+            users = CustomUsers.objects.filter(is_superuser=False)
+            users=users.order_by('-date_joined')
+            response_data=[]
+            for user in users:
+                today_bets,today_winning,overall_bets,overall_winning=0,0,0,0
+                try:
+
+                    tsn_data=TSN.objects.filter(transaction__cuser=user)
+                    for item in tsn_data:
+                        if item.transaction.date==date.today():
+                            today_bets+=item.playedpoints
+                            today_winning+=item.winning
+                        else:
+                            overall_bets+=item.playedpoints
+                            overall_winning+=item.winning
+                    overall_bets+=today_bets
+                    overall_winning+=today_winning
+                    
+                except Transaction.DoesNotExist:
+                    pass
+
+                user_data={
+                        'user':user.email,
+                        'today_bets':today_bets,
+                        'today_winning':today_winning,
+                        'overall_bets':overall_bets,
+                        'overall_winning':overall_winning,
+                        'date_joined':user.date_joined,
+                        'status':'Active' if user.is_active else 'Pending'
+                    }
+                response_data.append(user_data)
+            return Response(response_data,status=status.HTTP_200_OK)
+
+        except Exception as e:
+            return Response({"message": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
 
 class RechargeRequestAPIView(APIView):
     authentication_classes = [TokenAuthentication]
@@ -93,7 +188,12 @@ class RechargeRequestAPIView(APIView):
         pending_payments = PaymentForm.objects.filter(status='pending')
         if pending_payments.exists():
             serializer = PaymentFormSerializer(pending_payments, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            modified_data = []
+            for payment in serializer.data:
+                user = CustomUsers.objects.get(pk=payment['user'])
+                payment['user']=user.email
+                modified_data.append(payment)
+            return Response(modified_data, status=status.HTTP_200_OK)
         else:
             return Response({'message': 'No pending recharge requests'}, status=status.HTTP_204_NO_CONTENT)
 
@@ -129,6 +229,7 @@ class WithdrawRequestAPIView(APIView):
                     user = CustomUsers.objects.get(id=user_id)
                     bank_detail = BankDetailSerializer(user).data
                     withdraw_data['bank_details'] = bank_detail
+                    withdraw_data['user']=user.email
                 except CustomUsers.DoesNotExist:
                     withdraw_data['bank_details'] = None
                 response_data.append(withdraw_data)
@@ -141,7 +242,7 @@ class WithdrawRequestAPIView(APIView):
         new_status = request.data.get('status')
 
         if not withraw_id or not new_status:
-            return Response({'message': 'txn_id and status are required'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'message': 'withdraw_id and status are required'}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
             withdraw_request = WithdrawalHistory.objects.get(withdrawal_id=withraw_id)
@@ -156,6 +257,7 @@ class UpdateAdminPasswordAPIView(APIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsSuperUser]
 
+
     def patch(self,request):
         token_value=request.headers.get('Authorization')
         current_password = request.data.get('current_password')
@@ -168,7 +270,7 @@ class UpdateAdminPasswordAPIView(APIView):
             # Set the new password and save the user object
             user.set_password(new_password)
             user.save()
-            return render(request, 'dashboard.html', {'message': 'Password updated successfully'})
+            return Response({'message': 'Password updated successfully'}, status=status.HTTP_200_OK)
         else:
             # Return a response indicating that the current password is incorrect
             return Response({'message': 'Incorrect current password'}, status=status.HTTP_400_BAD_REQUEST)
@@ -179,8 +281,17 @@ class RechargeHistoryAPIView(APIView):
     permission_classes = [IsSuperUser]
 
     def get(self, request):
+        date_param = request.query_params.get('date')
         history_payments = PaymentForm.objects.filter(status__in=['approve', 'reject'])
+
         if history_payments.exists():
+            if date_param:
+                try:
+                    filter_date = parse_date(date_param)
+                    history_payments = history_payments.filter(created_at__date=filter_date)
+                except ValueError:
+                    return Response({'error': 'Invalid date format'}, status=status.HTTP_400_BAD_REQUEST)
+            history_payments = history_payments.order_by('-created_at')
             serializer = PaymentFormSerializer(history_payments, many=True)
             modified_data = []
             for payment in serializer.data:
@@ -198,10 +309,26 @@ class WithDrawalHistoryAPIView(APIView):
     permission_classes = [IsSuperUser]
 
     def get(self, request):
+        date_param = request.query_params.get('date')
         history_payments = WithdrawalHistory.objects.filter(status__in=['approve', 'reject'])
+
+        if date_param:
+            try:
+                filter_date = parse_date(date_param)
+                history_payments = history_payments.filter(created_at__date=filter_date)
+            except ValueError:
+                return Response({'error': 'Invalid date format'}, status=status.HTTP_400_BAD_REQUEST)
+
+        history_payments = history_payments.order_by('-created_at')
+
         if history_payments.exists():
             serializer = WithdrawalHistorySerializer(history_payments, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            modified_data = []
+            for payment in serializer.data:
+                user = CustomUsers.objects.get(pk=payment['user'])
+                payment['user']=user.email
+                modified_data.append(payment)
+            return Response(modified_data, status=status.HTTP_200_OK)
         else:
             return Response({'message': 'No recharge history available'}, status=status.HTTP_204_NO_CONTENT)
         

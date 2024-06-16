@@ -12,41 +12,47 @@ document.addEventListener('DOMContentLoaded', async function () {
     slider.addEventListener('input', function () {
         label.textContent = slider.value;
     });
-    const res=await fetch('http://127.0.0.1:8000/percent/',{
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    });
-    
-    const val=await res.json();
-    console.log(val);
-    // Set initial value from Node.js variable
-    // Assuming you pass the percentage value from Node.js to the template
-    var initialPercentage = val.data;
-    slider.value = initialPercentage;
-    label.textContent = initialPercentage;
+
+    // Retrieve token from local storage
+    const token = localStorage.getItem('token').match(/"([^"]*)"/)[1];
+    if (!token) {
+        console.error('Token not found in local storage');
+        return;
+    }
+
+    try {
+        const res = await fetch('http://127.0.0.1:8000/percent/', {
+            method: 'GET',
+            headers: {
+                'Authorization': 'Token ' + token,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        const val = await res.json();
+
+        // Set initial value from the API response
+        var initialPercentage = val.percent;
+        slider.value = initialPercentage;
+        label.textContent = initialPercentage;
+    } catch (error) {
+        console.error('Error fetching initial percentage:', error);
+    }
 
     // Handle form submission using fetch API
     submitButton.addEventListener('click', function () {
         var amount = slider.value;
 
-        // Retrieve token from local storage
-        const token = localStorage.getItem('jwt').match(/"([^"]*)"/)[1];
-        if (!token) {
-            console.error('Token not found in local storage');
-            return;
-        }
-
         // Construct URL with query parameters
-        var url = 'https://admin-soft.onrender.com/api/v1/win-percent?amount=' + encodeURIComponent(amount);
+        var url = 'http://127.0.0.1:8000/percent/';
 
         fetch(url, {
-            method: 'GET',
+            method: 'POST',
             headers: {
-                'Authorization': 'Bearer ' + token,
+                'Authorization': 'Token ' + token,
                 'Content-Type': 'application/json'
-            }
+            },
+            body: JSON.stringify({ percent: amount })
         })
         .then(function (response) {
             if (!response.ok) {
@@ -56,8 +62,10 @@ document.addEventListener('DOMContentLoaded', async function () {
         })
         .then(function (data) {
             // Process the response data
-            alert(data.data);
-            window.location.reload();
+            alert(`Percent Saved Successfully`);
+            if (data.status === 200 || data.status === 201) {
+                window.location.href = '/set-percent';
+            }
         })
         .catch(function (error) {
             console.error('Error:', error);

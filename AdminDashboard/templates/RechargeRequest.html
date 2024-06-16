@@ -18,22 +18,23 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <link rel="apple-touch-icon" sizes="76x76" href="/assets/img/apple-icon.png">
-  <link rel="icon" type="image/png" href="/assets/img/favicon.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="static/img/apple-icon.png">
+  <link rel="icon" type="image/png" href="static/img/favicon.png">
   <title>
     ADMIN Dashboard
   </title>
   <!--     Fonts and icons     -->
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
   <!-- Nucleo Icons -->
-  <link href="/assets/css/nucleo-icons.css" rel="stylesheet" />
-  <link href="/assets/css/nucleo-svg.css" rel="stylesheet" />
+  <link href="static/css/nucleo-icons.css" rel="stylesheet" />
+  <link href="static/css/nucleo-svg.css" rel="stylesheet" />
   <!-- Font Awesome Icons -->
   <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
-  <link href="/assets/css/nucleo-svg.css" rel="stylesheet" />
+  <link href="static/css/nucleo-svg.css" rel="stylesheet" />
   <!-- CSS Files -->
-  <link id="pagestyle" href="/assets/css/argon-dashboard.css?v=2.0.4" rel="stylesheet" />
+  <link id="pagestyle" href="static/css/argon-dashboard.css?v=2.0.4" rel="stylesheet" />
 
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- DataTables CSS -->
   <link href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css" rel="stylesheet">
 
@@ -92,6 +93,15 @@
           background-color: #10ce30;
           color: #000;
   }
+
+  .nav_button{
+      border-radius: 5px;
+      border: none;
+      /* background-color: blue; */
+      color: #000;
+      font-weight: 600;
+      letter-spacing: 1px;
+    }
 </style>
 
 <body class="g-sidenav-show   bg-gray-100">
@@ -100,7 +110,7 @@
     <div class="sidenav-header">
       <i class="fas fa-times p-3 cursor-pointer text-secondary opacity-5 position-absolute end-0 top-0 d-none d-xl-none" aria-hidden="true" id="iconSidenav"></i>
       <a class="navbar-brand m-0" class="navbar-brand-img h-100" alt="main_logo">
-        <img src="/assets/img/logo-ct-dark.png" class="navbar-brand-img h-100" alt="main_logo">
+        <img src="static/img/logo-ct-dark.png" class="navbar-brand-img h-100" alt="main_logo">
         <span class="ms-1 font-weight-bold">Admin Dashboard </span>
       </a>
     </div>
@@ -132,7 +142,7 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link active" href="/withdrawal-request">
+          <a class="nav-link" href="/withdrawal-request">
             <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
               <i class="ni ni-credit-card text-success text-sm opacity-10"></i>
             </div>
@@ -173,14 +183,14 @@
       <div class="container-fluid py-1 px-3">
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
-            <li class="breadcrumb-item text-sm"><a class="opacity-5 text-white" href="javascript:;">Pages</a></li>
-            <li class="breadcrumb-item text-sm text-white active" aria-current="page"><button><a href="/dashboard">Dashboard</a></button></li>
-            <li class="breadcrumb-item text-sm text-white active" aria-current="page"><button><a href="/recharge-request">WithdrawalRequest</a></button></li>
-            <li class="breadcrumb-item text-sm text-white active" aria-current="page"><button><a href="/recharge-history">WithdrawHistory</a></button></li>
-            <li class="breadcrumb-item text-sm text-white active" aria-current="page"><button><a href="/withdrawal-request">WithdrawalRequest</a></button></li>
-            <li class="breadcrumb-item text-sm text-white active" aria-current="page"><button><a href="/withdraw-history">WithdrawHistory</a></button></li>
-            <li class="breadcrumb-item text-sm text-white active" aria-current="page"><button><a href="/set-percent">Win Percentage</a></button></li>
-            <li class="breadcrumb-item text-sm text-white active" aria-current="page"><button><a href="/change-password">Change Password</a></button></li>
+            <li class="breadcrumb-item text-sm mt-1 mb-1"><a class="opacity-5 text-white" href="javascript:;">Pages</a></li>
+            <li class="breadcrumb-item text-sm mt-1 mb-1 text-white active" aria-current="page"><button class="nav_button"><a href="/dashboard">Dashboard</a></button></li>
+            <li class="breadcrumb-item text-sm mt-1 mb-1 text-white active" aria-current="page"><button class="nav_button"><a href="/recharge-request">RechargeRequest</a></button></li>
+            <li class="breadcrumb-item text-sm mt-1 mb-1 text-white active" aria-current="page"><button class="nav_button"><a href="/recharge-history">RechargeHistory</a></button></li>
+            <li class="breadcrumb-item text-sm mt-1 mb-1 text-white active" aria-current="page"><button class="nav_button"><a href="/withdrawal-request">WithdrawalRequest</a></button></li>
+            <li class="breadcrumb-item text-sm mt-1 mb-1 text-white active" aria-current="page"><button class="nav_button"><a href="/withdraw-history">WithdrawHistory</a></button></li>
+            <li class="breadcrumb-item text-sm mt-1 mb-1 text-white active" aria-current="page"><button class="nav_button"><a href="/set-percent">Win Percentage</a></button></li>
+            <li class="breadcrumb-item text-sm mt-1 mb-1 text-white active" aria-current="page"><button class="nav_button"><a href="/change-password">Change Password</a></button></li>
           </ol>
           <h6 class="font-weight-bolder text-white mb-0">Withdrawal Request</h6>
         </nav>
@@ -197,10 +207,9 @@
             </div>
 
             <div class="card-body px-0 pt-0 pb-2">
-              <div class="table-responsive p-0">
-                <!-- {% if rows %} -->
-                <table class="table align-items-center justify-content-center mb-0" id="withdrawRequest">
-                  <thead>
+              <div class="table-responsive p-3">
+                <table class="table align-items-center justify-content-center mb-0" id="RechargeRequest">
+                  <!-- <thead>
                     <tr>
                       <th class="text-uppercase text-secondary text-xxs font-weight-bolder ">Request Id</th>
                       <th class="text-uppercase text-secondary text-xxs font-weight-bolder ps-2">Account Details</th>
@@ -210,9 +219,9 @@
                     </tr>
                   </thead>
                   <tbody >
-                    <!-- Table rows will be dynamically added here -->
+                    
                       
-                  </tbody>
+                  </tbody> -->
                   
                 </table>
                 
@@ -297,10 +306,10 @@
     </div>
   </div>
   <!--   Core JS Files   -->
-  <script src="/assets/js/core/popper.min.js"></script>
-  <script src="/assets/js/core/bootstrap.min.js"></script>
-  <script src="/assets/js/plugins/perfect-scrollbar.min.js"></script>
-  <script src="/assets/js/plugins/smooth-scrollbar.min.js"></script>
+  <script src="static/js/core/popper.min.js"></script>
+  <script src="static/js/core/bootstrap.min.js"></script>
+  <script src="static/js/plugins/perfect-scrollbar.min.js"></script>
+  <script src="static/js/plugins/smooth-scrollbar.min.js"></script>
   <script>
     var win = navigator.platform.indexOf('Win') > -1;
     if (win && document.querySelector('#sidenav-scrollbar')) {
@@ -313,7 +322,7 @@
   <!-- Github buttons -->
   <script async defer src="https://buttons.github.io/buttons.js"></script>
   <!-- Control Center for Soft Dashboard: parallax effects, scripts for the example pages etc -->
-  <script src="/assets/js/argon-dashboard.min.js?v=2.0.4"></script>
+  <script src="static/js/argon-dashboard.min.js?v=2.0.4"></script>
 
 
 
@@ -343,9 +352,9 @@
     });
   </script>
 
+  <script src="static/js/response/Recharge_Request.js"></script>
 
-
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  
   <!-- Include DataTables JavaScript -->
   <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
 

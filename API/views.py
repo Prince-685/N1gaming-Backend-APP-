@@ -1,7 +1,7 @@
 from datetime import date, datetime, timedelta
 import random
 from django.shortcuts import get_object_or_404
-from .utils import generate_unique_id, send_otp, handle_otp_for_user
+from .utils import generate_unique_id, reset_password_message, send_otp, handle_otp_for_user
 from rest_framework.views import APIView
 from .models import TSN, CustomUsers, DateModel, TimeEntryModel, Transaction, UserGame, Win_Percent
 from .serializers import BankDetailSerializer, CustomUserSerializer, DateModelSerializer, TSNSerializer, TimeEntrySerializer, TransactionSerializer, UserGameSerializer
@@ -89,9 +89,9 @@ class ResendOTPAPIView(APIView):
             # Reset resend count and update last resend time
             user.otp_resend_count = 0
             user.last_otp_send_time = datetime.now()
-        
+        subject="Password Reset"
         # Generate new OTP
-        new_otp = send_otp(user_email)
+        new_otp = reset_password_message(user_email,subject)
 
         # Update user's OTP in the database
         user.otp = new_otp

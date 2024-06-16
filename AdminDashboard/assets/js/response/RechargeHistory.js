@@ -1,12 +1,12 @@
 document.addEventListener('DOMContentLoaded', function () {
     const withdrawForm = document.getElementById('searchDate');
-    const tableBody = document.getElementById('withdrawHistory');
+    const tableBody = document.getElementById('RechargeHistory');
 
     // Function to fetch and populate the table data
     async function populateTableData(token, date = null) {
         try {
             // Fetch data from API endpoint
-            let url = 'http://127.0.0.1:8000/withdrawal_history';
+            let url = 'http://127.0.0.1:8000/recharge_history';
             if (date) {
                 url += `?date=${date}`;
             }
@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             // Parse the JSON response
             const data = await response.json();
-
+            console.log(data)
             
             // Clear existing content
             tableBody.innerHTML = '';
@@ -50,9 +50,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 tableBody.appendChild(row);
             } else {
                 const arrayOfArrays = data.map(obj => [
-                    obj.withdrawal_id,
+                    obj.txn_id,
                     obj.user,
                     obj.amount,
+                    obj.payment_method,
+                    obj.upi_id,
                     obj.created_at,
                     obj.status,
                 ]);
@@ -62,18 +64,15 @@ document.addEventListener('DOMContentLoaded', function () {
                     destroy: true,
                     data: arrayOfArrays, // Use the data from the API response
                     columns: [
-                        { title: "WithDraw Id" },
-                        { 
-                            title: "User",
-                            render: function (data, type, row) {
-                                return ` ${row[1]}`; 
-                            }
-                        },
+                        { title: "Txn Id" },
+                        { title: "User" },
                         { title: "Amount" },
+                        { title: "Payment Method" },
+                        { title: "UPI Id" },
                         {  
                             title: "Requested At",
                             render: function (data, type, row) {
-                                const localdate = new Date(row[3]);
+                                const localdate = new Date(row[5]);
                                 const kolkataTime = localdate.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
                                 
                                 const [datePart, timePart] = kolkataTime.split(',');
@@ -123,7 +122,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 });
-
 
 const style = document.createElement('style');
 style.innerHTML = `
