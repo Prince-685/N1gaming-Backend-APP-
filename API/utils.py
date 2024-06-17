@@ -18,25 +18,20 @@ def authenticate_user(email, password):
     return None
 
 
-def send_otp(email,subject,html_message):
-
-    otp = ''.join(random.choices('0123456789', k=6))
-    message = f'Your OTP is: {otp}'
-    from_email = 'pagalno351@gmail.com'  # Your email address
-    to_email = email
-    send_mail(subject, message, from_email, [to_email], html_message=html_message)
-    return otp
-
 def handle_otp_for_user(user, email):
-                html_message=email_confirmation_message(email)
+                
+                otp = ''.join(random.choices('0123456789', k=6))
+                html_message=email_confirmation_message(email, otp)
                 subject="Registration Verification"
-                otp = send_otp(email,subject,html_message)
+                from_email = 'pagalno351@gmail.com'  # Your email address
+                to_email = email
+                send_mail(subject, "", from_email, [to_email], html_message=html_message)
                 user.otp = otp
                 user.last_otp_send_time = datetime.now()
                 user.save()
 
-def email_confirmation_message(to_email):
-    otp = ''.join(random.choices('0123456789', k=6))
+def email_confirmation_message(to_email, otp):
+    
     context = {
         'email': to_email,
         'timestamp': datetime.now().strftime("%m/%d/%Y %H:%M:%S"),

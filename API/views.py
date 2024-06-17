@@ -1,7 +1,7 @@
 from datetime import date, datetime, timedelta
 import random
 from django.shortcuts import get_object_or_404
-from .utils import generate_unique_id, reset_password_message, send_otp, handle_otp_for_user
+from .utils import email_confirmation_message, generate_unique_id, reset_password_message, handle_otp_for_user
 from rest_framework.views import APIView
 from .models import TSN, CustomUsers, DateModel, TimeEntryModel, Transaction, UserGame, Win_Percent
 from .serializers import BankDetailSerializer, CustomUserSerializer, DateModelSerializer, TSNSerializer, TimeEntrySerializer, TransactionSerializer, UserGameSerializer
@@ -13,7 +13,7 @@ from django.contrib.auth.hashers import check_password
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import NotFound
-from .utils import wining_result
+from django.core.mail import send_mail
 
 
 class UserRegistrationAPIView(APIView):
@@ -89,9 +89,14 @@ class ResendOTPAPIView(APIView):
             # Reset resend count and update last resend time
             user.otp_resend_count = 0
             user.last_otp_send_time = datetime.now()
-        subject="Password Reset"
+        
         # Generate new OTP
-        new_otp = reset_password_message(user_email,subject)
+        new_otp = ''.join(random.choices('0123456789', k=6))
+        subject="Password Reset"
+        html_message=email_confirmation_message(user_email, new_otp)
+        from_email = 'pagalno351@gmail.com'  # Your email address
+        to_email = user_email
+        send_mail(subject, "", from_email, [to_email], html_message=html_message)
 
         # Update user's OTP in the database
         user.otp = new_otp
