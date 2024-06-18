@@ -2,9 +2,13 @@ from datetime import datetime
 import random,time
 from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import check_password
-from django.core.mail import send_mail
+from django.core.mail import send_mail, BadHeaderError
 from django.template import loader
 from django.template.loader import render_to_string
+from django.core.exceptions import ImproperlyConfigured
+import smtplib
+from rest_framework.response import Response
+from rest_framework import status
 
 
 def authenticate_user(email, password):
@@ -19,16 +23,25 @@ def authenticate_user(email, password):
 
 
 def handle_otp_for_user(user, email):
-                
-                otp = ''.join(random.choices('0123456789', k=6))
-                html_message=email_confirmation_message(email, otp)
-                subject="Registration Verification"
-                from_email = 'pagalno351@gmail.com'  # Your email address
-                to_email = email
-                send_mail(subject, "", from_email, [to_email], html_message=html_message)
-                user.otp = otp
-                user.last_otp_send_time = datetime.now()
-                user.save()
+
+    try:            
+        otp = ''.join(random.choices('0123456789', k=6))
+        html_message=email_confirmation_message(email, otp)
+        subject="Registration Verification"
+        from_email = 'pagalno351@gmail.com'  # Your email address
+        to_email = email
+        send_mail(subject, "", from_email, [to_email], html_message=html_message)
+        user.otp = otp
+        user.last_otp_send_time = datetime.now()
+        user.save()
+    except BadHeaderError:
+        return Response({'message': "Invalid header found."}, status=status.HTTP_400_BAD_REQUEST)
+    except smtplib.SMTPException as e:
+        return Response({'message': f"SMTP error occurred: {e}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    except ImproperlyConfigured as e:
+        return Response({'message': f"Configuration error: {e}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    except Exception as e:
+        return Response({'message': f"An unexpected error occurred: {e}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 def email_confirmation_message(to_email, otp):
     
@@ -48,8 +61,17 @@ def reset_password_message(to_email,subject):
         'confirmation_code': otp,
     }
     message = render_to_string("forget-password.html", context)
-    send_mail(subject, '', 'pagalno351@gmail.com', [to_email], html_message=message)
-    return otp
+    try:
+        send_mail(subject, '', 'pagalno351@gmail.com', [to_email], html_message=message)
+        return otp
+    except BadHeaderError:
+        return Response({'message': "Invalid header found."}, status=status.HTTP_400_BAD_REQUEST)
+    except smtplib.SMTPException as e:
+        return Response({'message': f"SMTP error occurred: {e}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    except ImproperlyConfigured as e:
+        return Response({'message': f"Configuration error: {e}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    except Exception as e:
+        return Response({'message': f"An unexpected error occurred: {e}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 def generate_unique_id():
     # Get the current timestamp

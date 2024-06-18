@@ -86,6 +86,9 @@ class WithdrawalRequestAPIView(APIView):
         user=request.user
         amount=data['amount']
         data['user']=user.pk
+        if not user.account_number and  not user.holder_name and not user.ifsc_code and  not user.upi_id:
+            return Response({'message':'First add all the Bank Details'}, status=status.HTTP_412_PRECONDITION_FAILED)
+
         if amount<100:
             return Response({'message':'Minimum withrawal amount should be 100'}, status=status.HTTP_400_BAD_REQUEST)
 

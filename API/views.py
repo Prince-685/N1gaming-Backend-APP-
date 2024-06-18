@@ -13,7 +13,9 @@ from django.contrib.auth.hashers import check_password
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import NotFound
-from django.core.mail import send_mail
+from django.core.mail import send_mail, BadHeaderError
+from django.core.exceptions import ImproperlyConfigured
+import smtplib
 
 
 class UserRegistrationAPIView(APIView):
@@ -96,15 +98,24 @@ class ResendOTPAPIView(APIView):
         html_message=email_confirmation_message(user_email, new_otp)
         from_email = 'pagalno351@gmail.com'  # Your email address
         to_email = user_email
-        send_mail(subject, "", from_email, [to_email], html_message=html_message)
+        try:
+            send_mail(subject, "", from_email, [to_email], html_message=html_message)
 
-        # Update user's OTP in the database
-        user.otp = new_otp
-        user.otp_resend_count += 1
-        user.last_otp_send_time= datetime.now()
-        user.save()
-        
-        return Response({'message': 'New OTP sent successfully'}, status=status.HTTP_200_OK)
+            # Update user's OTP in the database
+            user.otp = new_otp
+            user.otp_resend_count += 1
+            user.last_otp_send_time= datetime.now()
+            user.save()
+            return Response({'message': 'New OTP sent successfully'}, status=status.HTTP_200_OK)
+        except BadHeaderError:
+            return Response({'message': "Invalid header found."}, status=status.HTTP_400_BAD_REQUEST)
+        except smtplib.SMTPException as e:
+            return Response({'message': f"SMTP error occurred: {e}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except ImproperlyConfigured as e:
+            return Response({'message': f"Configuration error: {e}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except Exception as e:
+            return Response({'message': f"An unexpected error occurred: {e}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                        
 
 class UserLoginAPIView(APIView):
     def post(self, request):
@@ -116,10 +127,6 @@ class UserLoginAPIView(APIView):
 
         if user is not None:
             if user.is_active:
-                # User is authenticated
-                # Delete any existing token
-                Token.objects.get(user=user).delete()
-                
                 # Generate a new token
                 token, created = Token.objects.get_or_create(user=user)
                 
@@ -143,12 +150,9 @@ class UserLogoutAPIView(APIView):
                 token = Token.objects.get(key=token_value.split(' ')[1])
                 user = token.user
                 
-                # Delete the retrieved token
-                token.delete()
-
-                # Optionally, you may want to log the user out of all devices by invalidating all of their tokens
-                # Here, we're simply deleting all of the user's tokens
-                Token.objects.filter(user=user).delete()
+                
+                # Here, we're simply deleting the user's token
+                Token.objects.get(user=user).delete()
 
                 return Response({'message': 'Logout successful'}, status=status.HTTP_200_OK)
             except Token.DoesNotExist:
