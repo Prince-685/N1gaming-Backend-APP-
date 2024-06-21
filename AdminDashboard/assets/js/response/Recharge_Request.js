@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         }
 
         // Fetch data from API endpoint
-        const response = await fetch('http://127.0.0.1:8000/admindashboard/recharge_request', {
+        const response = await fetch('http://n1gaming-backend-app.onrender.com/admindashboard/recharge_request', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -66,7 +66,7 @@ document.addEventListener('DOMContentLoaded', async function () {
                         title: "Payment Image",
                         render: function (data, type, row) {
                             const img_link = row[2];
-                            const fullUrl = 'http://127.0.0.1:8000' + img_link;
+                            const fullUrl = 'https://n1gaming-backend-app.onrender.com' + img_link;
                             return `<a href="${fullUrl}" target="_blank" class="payment-image-link">View Image</a>`;
                         }
                     },
@@ -139,7 +139,7 @@ async function ApproveRecharge(txn_id) {
         }
         const s={'status':'approve','txn_id': txn_id};
         // Send a request to accept the transaction
-        const response = await fetch(`http://127.0.0.1:8000/admindashboard/recharge_request`, {
+        const response = await fetch(`https://n1gaming-backend-app.onrender.com/admindashboard/recharge_request`, {
             method: 'PATCH',
             body: JSON.stringify(s),
             headers: {
@@ -169,7 +169,7 @@ async function RejectRecharge(txn_id) {
         }
         const s={'status':'reject','txn_id': txn_id};
         // Send a request to decline the transaction
-        const response = await fetch(`http://127.0.0.1:8000/admindashboard/recharge_request`, {
+        const response = await fetch(`https://n1gaming-backend-app.onrender.com/admindashboard/recharge_request`, {
             method: 'PATCH',
             body: JSON.stringify(s),
             headers: {

@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', function () {
     async function populateTableData(token, date = null) {
         try {
             // Fetch data from API endpoint
-            let url = 'http://127.0.0.1:8000/withdrawal_history';
+            let url = 'https://n1gaming-backend-app.onrender.com/withdrawal_history';
             if (date) {
                 url += `?date=${date}`;
             }

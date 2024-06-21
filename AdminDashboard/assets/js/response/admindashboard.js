@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     };
 
     try {
-        const userList = await fetchData('http://127.0.0.1:8000/userlist');
+        const userList = await fetchData('https://n1gaming-backend-app.onrender.com/userlist');
         const tableBody = $('#userlist').DataTable({
             
             data: userList.map(Object.values),
@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     } catch (error) {}
 
     try {
-        const dashboardData = await fetchData('http://127.0.0.1:8000/admindashboard_data');
+        const dashboardData = await fetchData('https://n1gaming-backend-app.onrender.com/admindashboard_data');
         document.getElementById('today_bets').textContent = dashboardData['today_bets'];
         document.getElementById('today_bets_won').textContent = dashboardData['today_bets_won'];
         document.getElementById('today_bet_loss').textContent = dashboardData['today_bet_loss'];

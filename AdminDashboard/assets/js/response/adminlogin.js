@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
         try {
-            const response = await fetch('http://127.0.0.1:8000/adminlogin/', {
+            const response = await fetch('https://n1gaming-backend-app.onrender.com/adminlogin/', {
                 method: 'POST',
                 body: JSON.stringify(jsonData),
                 headers: {

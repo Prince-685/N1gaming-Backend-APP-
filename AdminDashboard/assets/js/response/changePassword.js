@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
             console.log(token);
 
-            const response = await fetch('http://127.0.0.1:8000/update_password/', {
+            const response = await fetch('https://n1gaming-backend-app.onrender.com/update_password/', {
                 method: 'PATCH',
                 body: JSON.stringify(jsonData),
                 headers: {

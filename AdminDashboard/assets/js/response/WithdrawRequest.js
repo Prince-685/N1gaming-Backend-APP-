@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         }
 
         // Fetch data from API endpoint
-        const response = await fetch('http://127.0.0.1:8000/admindashboard/withdraw_request', {
+        const response = await fetch('https://n1gaming-backend-app.onrender.com/admindashboard/withdraw_request', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -123,7 +123,7 @@ async function ApproveWithdrawal(withdrawal_id) {
         }
         const s={'status':'approve','withdrawal_id': withdrawal_id};
         // Send a request to accept the transaction
-        const response = await fetch(`http://127.0.0.1:8000/admindashboard/withdraw_request`, {
+        const response = await fetch(`https://n1gaming-backend-app.onrender.com/admindashboard/withdraw_request`, {
             method: 'PATCH',
             body: JSON.stringify(s),
             headers: {
@@ -153,7 +153,7 @@ async function RejectWithdrawal(withdrawal_id) {
         }
         const s={'status':'reject','withdrawal_id': withdrawal_id};
         // Send a request to decline the transaction
-        const response = await fetch(`http://127.0.0.1:8000/admindashboard/withdraw_request`, {
+        const response = await fetch(`https://n1gaming-backend-app.onrender.com/admindashboard/withdraw_request`, {
             method: 'PATCH',
             body: JSON.stringify(s),
             headers: {

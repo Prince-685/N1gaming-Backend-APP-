@@ -90,17 +90,21 @@ class AdminDashboardDataAPIView(APIView):
             tsn_instance=TSN.objects.all()
             for item in tsn_instance:
                 if item.transaction.date==date.today():
-                    today_bets+=item.playedpoints
-                    if item.winning>0:
-                        today_bets_won+=item.winning
+                    today_bets+=int(item.playedpoints)
+                    if item.winning=='live':
+                        continue
+                    elif int(item.winning)>0:
+                        today_bets_won+=int(item.winning)
                     else:
-                        today_bet_loss+=item.playedpoints
+                        today_bet_loss+=int(item.playedpoints)
                 else:
-                    overall_bets+=item.playedpoints
-                    if item.winning>0:
-                        overall_bets_won+=item.winning
+                    overall_bets+=int(item.playedpoints)
+                    if item.winning=='live':
+                        continue
+                    elif int(item.winning)>0:
+                        overall_bets_won+=int(item.winning)
                     else:
-                        overall_bet_loss+=item.playedpoints
+                        overall_bet_loss+=int(item.playedpoints)
 
             today_profit=today_bets-today_bets_won
             overall_bets+=today_bets
@@ -152,13 +156,19 @@ class UserListAPI(APIView):
                     tsn_data=TSN.objects.filter(transaction__cuser=user)
                     for item in tsn_data:
                         if item.transaction.date==date.today():
-                            today_bets+=item.playedpoints
-                            today_winning+=item.winning
+                            if item.winning=='live':
+                                continue
+                            else:
+                                today_bets+=int(item.playedpoints)
+                                today_winning+=int(item.winning)
                         else:
-                            overall_bets+=item.playedpoints
-                            overall_winning+=item.winning
-                    overall_bets+=today_bets
-                    overall_winning+=today_winning
+                            if item.winning=='live':
+                                continue
+                            else:
+                                overall_bets+=int(item.playedpoints)
+                                overall_winning+=int(item.winning)
+                    overall_bets+=int(today_bets)
+                    overall_winning+=int(today_winning)
                     
                 except Transaction.DoesNotExist:
                     pass

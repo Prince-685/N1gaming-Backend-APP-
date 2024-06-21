@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     }
 
     try {
-        const res = await fetch('http://127.0.0.1:8000/percent/', {
+        const res = await fetch('https://n1gaming-backend-app.onrender.com/percent/', {
             method: 'GET',
             headers: {
                 'Authorization': 'Token ' + token,
@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         var amount = slider.value;
 
         // Construct URL with query parameters
-        var url = 'http://127.0.0.1:8000/percent/';
+        var url = 'https://n1gaming-backend-app.onrender.com/percent/';
 
         fetch(url, {
             method: 'POST',
