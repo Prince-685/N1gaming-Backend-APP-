@@ -37,10 +37,12 @@
             .then(data => {
                 console.log('Success:', data);
                 alert('Image submitted successfully!');
+                window.location.reload()
             })
             .catch((error) => {
                 console.error('Error:', error);
                 alert('There was an error submitting the image.');
+                window.location.reload()
             });
         });
 
