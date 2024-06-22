@@ -43,3 +43,8 @@
                 alert('There was an error submitting the image.');
             });
         });
+
+
+
+
+
