@@ -4,6 +4,7 @@ from . import views
 urlpatterns = [
     path('',views.Admin_login_page),
     path('adminlogin/', views.AdminLoginAPIView.as_view(), name='admin-login'),
+    path('payment-qr', views.PaymentQR_page),
     path('recharge-request', views.RechargeRequest_page),
     path('recharge-history', views.RechargeHistory_page),
     path('withdrawal-request', views.WithdrawalRequest_page),

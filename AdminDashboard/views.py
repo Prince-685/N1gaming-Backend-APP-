@@ -28,6 +28,10 @@ def Dashboard_page(request):
 
 
 @login_required
+def PaymentQR_page(request):
+    return render(request, 'paymentQR.html')
+
+@login_required
 def RechargeRequest_page(request):
     return render(request, 'RechargeRequest.html')
 
