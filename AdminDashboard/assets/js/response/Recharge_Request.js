@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         }
 
         // Fetch data from API endpoint
-        const response = await fetch('http://n1gaming-backend-app.onrender.com/admindashboard/recharge_request', {
+        const response = await fetch('https://n1gaming-backend-app.onrender.com/admindashboard/recharge_request', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',

@@ -157,13 +157,13 @@ class UserListAPI(APIView):
                     for item in tsn_data:
                         if item.transaction.date==date.today():
                             if item.winning=='live':
-                                continue
+                                today_bets+=int(item.playedpoints)
                             else:
                                 today_bets+=int(item.playedpoints)
                                 today_winning+=int(item.winning)
                         else:
                             if item.winning=='live':
-                                continue
+                                overall_bets+=int(item.playedpoints)
                             else:
                                 overall_bets+=int(item.playedpoints)
                                 overall_winning+=int(item.winning)
