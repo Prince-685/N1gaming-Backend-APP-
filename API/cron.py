@@ -121,7 +121,7 @@ def Settle_bets():
         today_date=date.today()
         
         current_time = datetime.now()
-        adjusted_time = current_time - timedelta(minutes=2)
+        adjusted_time = current_time - timedelta(minutes=1)
         adjusted_time = adjusted_time.replace(second=0, microsecond=0)
         time = adjusted_time.time()
         date_instance=DateModel.objects.get(date=date.today())

@@ -256,7 +256,7 @@ class RecentResultAPIView(APIView):
             date_instance = DateModel.objects.get(date=current_date)
 
             current_time = datetime.now()
-            recent_minute = current_time.minute // 15 * 15
+            recent_minute = current_time.minute // 10 * 10
             recent_time_str = current_time.replace(minute=recent_minute).strftime("%I:%M %p")
 
             time_instance = TimeEntryModel.objects.get(date=date_instance, Time=recent_time_str)

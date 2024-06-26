@@ -173,14 +173,16 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CRONJOBS = [
     # for saving result
     ('30 9 * * *', 'API.cron.Save_result'),
-    ('45 9 * * *', 'API.cron.Save_result'),
-    ('0-59/15 10-21 * * *', 'API.cron.Save_result'),
-    ('0 22 * * *', 'API.cron.Save_result'),
+    ('40 9 * * *', 'API.cron.Save_result'),
+    ('50 9 * * *', 'API.cron.Save_result'),
+    ('0-59/10 10-22 * * *', 'API.cron.Save_result'),
+    ('0 23 * * *', 'API.cron.Save_result'),
 
     # To settle bets after two minutes
-    ('32 9 * * *', 'API.cron.Settle_bets'),
-    ('47 9 * * *', 'API.cron.Settle_bets'),
-    ('2-59/15 10-21 * * *', 'API.cron.Settle_bets'),
-    ('2 22 * * *', 'API.cron.Settle_bets'),
+    ('31 9 * * *', 'API.cron.Settle_bets'),
+    ('41 9 * * *', 'API.cron.Settle_bets'),
+    ('51 9 * * *', 'API.cron.Settle_bets'),
+    ('1-59/10 10-22 * * *', 'API.cron.Settle_bets'),
+    ('1 23 * * *', 'API.cron.Settle_bets'),
 
 ]
