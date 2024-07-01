@@ -135,12 +135,14 @@ SESSION_COOKIE_AGE = 1209600  # Two weeks, in seconds
 
 #Email Settings
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'  # Your SMTP server address
-EMAIL_PORT = 587  # Your SMTP server port (usually 587 for TLS)
-EMAIL_USE_TLS = True  # Enable TLS encryption
-EMAIL_HOST_USER = 'pagalno351@gmail.com'  # Your SMTP username/email
-EMAIL_HOST_PASSWORD = 'twge nwni vnci mxvp'  # Your SMTP password
-DEFAULT_FROM_EMAIL = 'pagalno351@gmailcom'  # Default sender email address
+EMAIL_HOST = 'smtpout.secureserver.net'
+EMAIL_PORT = 465
+EMAIL_USE_SSL = True
+EMAIL_USE_TLS = False
+EMAIL_HOST_USER = 'support@n1gaming.in'
+EMAIL_HOST_PASSWORD = 'admin@n1gaming'
+DEFAULT_FROM_EMAIL = 'support@n1gaming.in'
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
