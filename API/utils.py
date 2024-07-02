@@ -7,6 +7,7 @@ from django.template import loader
 from django.template.loader import render_to_string
 from django.core.exceptions import ImproperlyConfigured
 import smtplib
+import numpy as np
 from rest_framework.response import Response
 from rest_framework import status
 
