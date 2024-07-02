@@ -28,7 +28,7 @@ def handle_otp_for_user(user, email):
         otp = ''.join(random.choices('0123456789', k=6))
         html_message=email_confirmation_message(email, otp)
         subject="Registration Verification"
-        from_email = 'pagalno351@gmail.com'  # Your email address
+        from_email = 'support@n1gaming.in'  # Your email address
         to_email = email
         send_mail(subject, "", from_email, [to_email], html_message=html_message)
         user.otp = otp
@@ -62,7 +62,7 @@ def reset_password_message(to_email,subject):
     }
     message = render_to_string("forget-password.html", context)
     try:
-        send_mail(subject, '', 'pagalno351@gmail.com', [to_email], html_message=message)
+        send_mail(subject, '', 'support@n1gaming.in', [to_email], html_message=message)
         return otp
     except BadHeaderError:
         return Response({'message': "Invalid header found."}, status=status.HTTP_400_BAD_REQUEST)

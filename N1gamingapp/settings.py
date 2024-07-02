@@ -138,7 +138,6 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtpout.secureserver.net'
 EMAIL_PORT = 465
 EMAIL_USE_SSL = True
-EMAIL_USE_TLS = False
 EMAIL_HOST_USER = 'support@n1gaming.in'
 EMAIL_HOST_PASSWORD = 'admin@n1gaming'
 DEFAULT_FROM_EMAIL = 'support@n1gaming.in'

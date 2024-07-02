@@ -96,7 +96,7 @@ class ResendOTPAPIView(APIView):
         new_otp = ''.join(random.choices('0123456789', k=6))
         subject="Password Reset"
         html_message=email_confirmation_message(user_email, new_otp)
-        from_email = 'pagalno351@gmail.com'  # Your email address
+        from_email = 'support@n1gaming.in'  # Your email address
         to_email = user_email
         try:
             send_mail(subject, "", from_email, [to_email], html_message=html_message)
